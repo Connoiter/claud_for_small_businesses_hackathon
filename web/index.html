@@ -154,7 +154,8 @@ ul.stages small { display: block; font-weight: 400; color: var(--muted); font-si
 .regions { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
 .regions h3 { font-family: var(--font-display); font-weight: 500; font-size: var(--step-2); margin: 0; }
 .regions ol { margin: 0; padding: 0; list-style: none; columns: 3 220px; column-gap: 28px; }
-.regions li { break-inside: avoid; padding: 6px 0; border-bottom: 1px solid var(--line); font-size: var(--step-0); display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 8px; }
+.regions li { break-inside: avoid; padding: 6px 0; border-bottom: 1px solid var(--line); font-size: var(--step-0); display: grid; grid-template-columns: 14px minmax(0,1fr) auto; gap: 8px; align-items: center; }
+.regions .swatch { width: 12px; height: 12px; border-radius: 50%; background: var(--line); box-shadow: inset 0 0 0 1px rgba(0,0,0,0.12); }
 .regions li span:last-child { font-family: var(--font-mono); color: var(--muted); font-variant-numeric: tabular-nums; }
 
 .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin: 18px 0 16px; }
@@ -290,7 +291,7 @@ a { color: var(--accent); }
       <div class="results" id="resultsMap" role="tabpanel" aria-labelledby="tabMap">
         <iframe class="mapframe" id="mapFrame" title="Datamap of your files" loading="lazy"></iframe>
         <div class="regions">
-          <h3>Regions on the map</h3>
+          <h3>Groups on the map</h3>
           <ol id="regionList"></ol>
           <a href="#" target="_blank" rel="noopener" id="openFull">Open the map full screen</a>
         </div>
@@ -565,10 +566,43 @@ function showResult(job, smp) {
   const reportUrl = job.report_url || (smp && smp.report);
   $("#tabReport").hidden = !reportUrl; $("#resultsReport").innerHTML = ""; showTab("map");
   if (reportUrl) loadReport(reportUrl);
-  $("#regionList").innerHTML = (job.regions || []).map((r) => `<li><span>${esc(r.name === "Unlabelled" ? "Not in a region" : r.name)}</span><span>${r.count}</span></li>`).join("") || "<li><span>No regions listed</span><span></span></li>";
+  $("#regionList").innerHTML = (job.regions || []).map((r) => `<li data-name="${esc(norm(r.name))}"><span class="swatch" aria-hidden="true"></span><span>${esc(r.name === "Unlabelled" ? "Not in a region" : r.name)}</span><span>${r.count}</span></li>`).join("") || "<li><span></span><span>No groups listed</span><span></span></li>";
+  colorLegend();
   go(2);
 }
 
+function norm(s) { return String(s).toLowerCase().replace(/\s+/g, " ").trim(); }
+const NO_GROUP = /^(fits no group|not in a region|unlabell?ed)$/;
+// Read each group's dot colour from the map itself. DataMapPlot exposes window.datamap with labelData
+// (name and position of each group) and pointData (columns x, y, r, g, b). Label text is drawn darker than the
+// dots, so take the most common colour among the dots nearest each label instead.
+function colorLegend() {
+  const frame = $("#mapFrame"), started = Date.now();
+  (function poll() {
+    let labels = null;
+    let pts = null;
+    try { const dm = frame.contentWindow && frame.contentWindow.datamap; labels = dm && dm.labelData; pts = dm && dm.pointData; } catch { return; }
+    if (!labels || !labels.length || !pts || !pts.x) { if (Date.now() - started < 30000) setTimeout(poll, 400); return; }
+    const n = pts.x.length, colours = {};
+    labels.forEach((l) => {
+      const k = norm(l.label); if (k in colours) return;
+      const near = [];
+      for (let i = 0; i < n; i++) {
+        if (pts.r[i] === pts.g[i] && pts.g[i] === pts.b[i]) continue; // grey = not in a group
+        near.push([(pts.x[i] - l.x) ** 2 + (pts.y[i] - l.y) ** 2, `rgb(${pts.r[i]}, ${pts.g[i]}, ${pts.b[i]})`]);
+      }
+      near.sort((p, q) => p[0] - q[0]);
+      const votes = {}; near.slice(0, 9).forEach(([, c]) => votes[c] = (votes[c] || 0) + 1);
+      const best = Object.entries(votes).sort((p, q) => q[1] - p[1])[0];
+      colours[k] = best ? best[0] : `rgb(${l.r}, ${l.g}, ${l.b})`;
+    });
+    document.querySelectorAll("#regionList li[data-name]").forEach((li) => {
+      const k = li.dataset.name, sw = li.querySelector(".swatch");
+      if (colours[k]) sw.style.background = colours[k];
+      else if (NO_GROUP.test(k)) sw.style.background = "#999999";
+    });
+  })();
+}
 function showTab(which) {
   const map = which === "map";
   $("#tabMap").setAttribute("aria-selected", map); $("#tabReport").setAttribute("aria-selected", !map);

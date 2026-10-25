@@ -247,7 +247,7 @@ requests ([#1](https://github.com/Connoiter/claude_for_small_businesses_hackatho
 | John Tigue | Lead; King Tutte pipeline; project conceptor; live demo |
 | Cato Lin | `/datamap` skill, ingest, Claude labeling, insights report |
 | Poonam Sharma | Map experience, sample data, demo video |
-| Jolie Martin | Owner research, use case, README, pitch |
+| Jolie Martin | OKFifyer, use case, README, pitch |
 
 ## License
 

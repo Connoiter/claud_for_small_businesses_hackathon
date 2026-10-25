@@ -3,3 +3,4 @@ __pycache__/
 *.pyc
 out/
 kf_bundle/
+.DS_Store

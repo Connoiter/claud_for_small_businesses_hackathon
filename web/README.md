@@ -23,7 +23,7 @@ No build step, no Hugo.
 3. **Your datamap.** The map in a frame, with a list of regions.
 
 Samples on the page:
-- **Lakeview Café** (default): 260 made-up reviews, one dot per review. Map and report are the real output of the team's `/datamap` pipeline (github.com/Connoiter/claud_for_small_businesses_hackathon, `examples/lakeview-cafe`).
+- **Lakeview Café** (default): 260 made-up reviews, one dot per review. Map and report are the real output of the team's `/datamap` pipeline (github.com/Connoiter/claude_for_small_businesses_hackathon, `examples/lakeview-cafe`).
 - **Northside Yoga**: 238 made-up member survey answers, one dot per answer. Map and report from the team pipeline (`examples/northside-yoga`; data from `demo-data/`).
 - **Rainier Paws**: 241 made-up dog grooming reviews, one dot per review. Map and report from the team pipeline (`examples/rainier-paws`; data from `demo-data/`).
 - **Fern & Kettle**: made-up tea shop one dot per customer, six sources with owner notes. Its map comes from the simpler stand-in pipeline, so it has no report.

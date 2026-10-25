@@ -2,3 +2,6 @@
 __pycache__/
 *.pyc
 out/
+.venv/
+kf_bundle/
+out/

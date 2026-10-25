@@ -1,4 +1,15 @@
-# Owner site
+# Demo site
+
+`index.html` introduces the `/datamap` skill. It shows two datamaps made in real `/datamap`
+sessions (`maps/thinkspace.html`: 61 pages of thinkspace.com; `maps/knowledgeforge.html`:
+585 notes from the KnowledgeForge repo), each next to an example conversation built on that
+map. Highlighted regions and searches in the conversation drive the map beside it. To swap in
+a new map, replace the file in `maps/` and update the conversation's numbers to match.
+
+Published on GitHub Pages by `.github/workflows/pages.yml`. To preview locally, serve the
+repository root (`python -m http.server`) and open http://localhost:8000/web/.
+
+# Builder prototype (`builder.html`)
 
 A static page a small business owner visits to say what they want to map, hand over their files with a note on each, and see the datamap.
 No build step, no Hugo.

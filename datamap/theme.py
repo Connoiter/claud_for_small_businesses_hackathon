@@ -123,6 +123,8 @@ body {{ background: #ffffff; font-family: "{BODY}", {STACK}; color: {INK}; }}
 #d3histogram-container g.d3histogram-axis[transform] .tick:nth-of-type(even) text {{ display: none; }}
 #d3histogram-interactioncontainer > .selection {{ fill: {ACCENT_SOFT}; stroke: {ACCENT}; }}
 #loading {{ background: #ffffff !important; }}
+/* DataMapPlot hides the bottom-left panel (the timeline) below 768px; keep it in narrow frames. */
+@media (max-width: 768px) {{ .bottom-left {{ display: flex !important; }} }}
 """
 
 

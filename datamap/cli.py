@@ -54,6 +54,13 @@ def main(argv: list[str] | None = None) -> None:
         help="Website the documents are published on (e.g. a Hugo site built from an OKF "
         "bundle); clicking a dot opens <link-base>/<document id>/ instead of the original file.",
     )
+    r.add_argument(
+        "--style",
+        choices=["site", "cord19"],
+        default="site",
+        help="Map look: site (default, matches the owner web page) or cord19 (serif title, "
+        "group outlines, like DataMapPlot's CORD-19 map).",
+    )
 
     s = sub.add_parser(
         "serve",
@@ -81,7 +88,7 @@ def main(argv: list[str] | None = None) -> None:
     else:
         from .render import render
 
-        render(args.out, args.link_base)
+        render(args.out, args.link_base, args.style)
 
 
 if __name__ == "__main__":

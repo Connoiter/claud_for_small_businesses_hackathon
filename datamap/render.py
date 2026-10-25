@@ -12,21 +12,22 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from . import theme
+from . import theme, theme_cord19
 from .ingest import rating_column
 from .prepare import NOISE, typical_examples
 
 NOISE_LABEL = "Fits no group"
 LOW_RATING = 3.0
+STYLES = {"site": theme, "cord19": theme_cord19}  # --style choices; site is the default
 
 
-def render(out: Path, link_base: str | None = None) -> None:
+def render(out: Path, link_base: str | None = None, style: str = "site") -> None:
     df = pd.read_parquet(out / "points.parquet")
     vectors = np.load(out / "embeddings.npy")
     labels = load_labels(out / "labels.json", df)
 
     print("Drawing the map ...")
-    write_map(df, labels, out / "map.html", link_base)
+    write_map(df, labels, out / "map.html", link_base, style)
     write_insights(df, vectors, labels, out / "insights.md")
     print(f"Wrote {out / 'map.html'} and {out / 'insights.md'}")
 
@@ -44,9 +45,12 @@ def load_labels(path: Path, df: pd.DataFrame) -> dict:
     return labels
 
 
-def write_map(df: pd.DataFrame, labels: dict, path: Path, link_base: str | None = None) -> None:
+def write_map(
+    df: pd.DataFrame, labels: dict, path: Path, link_base: str | None = None, style: str = "site"
+) -> None:
     import datamapplot
 
+    look = STYLES[style]
     names = labels["clusters"]
     layer = np.array(
         [NOISE_LABEL if c == NOISE else names[str(c)]["label"] for c in df["cluster"]],
@@ -67,12 +71,14 @@ def write_map(df: pd.DataFrame, labels: dict, path: Path, link_base: str | None 
         urls = [page_url(link_base, i) for i in df["id"]] if link_base else df["url"].fillna("")
         extra["url"] = list(urls)
         kwargs["on_click"] = "if (`{url}`) window.open(`{url}`, '_blank')"
+    if hasattr(look, "marker_sizes"):
+        kwargs["marker_size_array"] = look.marker_sizes(df)
     dates = _dates(df)
     if dates is not None:
         kwargs.update(
             histogram_data=dates,
             histogram_group_datetime_by="month",
-            histogram_settings=theme.HISTOGRAM_SETTINGS,
+            histogram_settings=look.HISTOGRAM_SETTINGS,
         )
 
     plot = datamapplot.create_interactive_plot(
@@ -81,16 +87,14 @@ def write_map(df: pd.DataFrame, labels: dict, path: Path, link_base: str | None 
         hover_text=df["text"].map(lambda t: _shorten(t, 120)).tolist(),
         title=labels.get("title", "Datamap"),
         sub_title=f"{len(df):,} entries, grouped by meaning. Hover a dot to read it.",
-        custom_css=theme.custom_css(),
-        custom_js=theme.custom_js(),
+        custom_css=look.custom_css(),
+        custom_js=look.custom_js(),
         noise_label=NOISE_LABEL,
         extra_point_data=extra,
-        hover_text_html_template=theme.TOOLTIP_TEMPLATE,
+        hover_text_html_template=look.TOOLTIP_TEMPLATE,
         enable_search=True,
-        point_radius_min_pixels=4,
-        point_radius_max_pixels=14,
         offline_mode=True,
-        **theme.PLOT_KWARGS,
+        **{"point_radius_min_pixels": 4, "point_radius_max_pixels": 14, **look.PLOT_KWARGS},
         **kwargs,
     )
     plot.save(str(path))

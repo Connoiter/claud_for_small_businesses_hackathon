@@ -16,7 +16,12 @@ def main(argv: list[str] | None = None) -> None:
     sub = parser.add_subparsers(dest="command", required=True)
 
     p = sub.add_parser("prepare", help="Read, embed, lay out and group the documents.")
-    p.add_argument("input", type=Path, help="A CSV/Excel file, or a folder of .md/.txt/.pdf files.")
+    p.add_argument(
+        "input",
+        type=Path,
+        help="A CSV/Excel file, a folder of .md/.txt/.pdf files, or a documents.parquet "
+        "from okf_to_documents.py.",
+    )
     p.add_argument("--out", type=Path, required=True, help="Folder for this run's files.")
     p.add_argument("--text-col", help="CSV column holding the text (default: the longest one).")
     p.add_argument("--title-col", help="CSV column holding a short title (default: first words).")
@@ -27,7 +32,7 @@ def main(argv: list[str] | None = None) -> None:
     r.add_argument(
         "--link-base",
         help="Website the documents are published on (e.g. a Hugo site built from an OKF "
-        "bundle); clicking a dot opens <link-base>/<file path>/.",
+        "bundle); clicking a dot opens <link-base>/<document id>/ instead of the original file.",
     )
 
     args = parser.parse_args(argv)

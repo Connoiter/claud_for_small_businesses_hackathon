@@ -62,7 +62,13 @@ Type:
 
 Claude asks which file or folder to map, runs everything, names the groups,
 and opens the map. You can also just say *"what are my customers saying in
-reviews.csv?"*
+reviews.csv?"* or *"what's in my notes folder?"*
+
+If you give it a folder of notes, Claude first checks and tidies a copy of
+them (your folder is never changed). It tells you what it found, such as
+notes missing a label, headers too broken for AI tools to read, or the same
+note saved twice. See [DATA_CURATION.md](DATA_CURATION.md) for what this found
+in a real knowledge base.
 
 The first run downloads a small language model (about 90 MB) and takes a few
 minutes. Later runs take about a minute.
@@ -87,16 +93,21 @@ unusual ones. Nothing else is uploaded.
 ## For developers
 
 The skill is [`.claude/skills/datamap/SKILL.md`](.claude/skills/datamap/SKILL.md).
-It drives a two-step command line:
+It drives a short command line:
 
 ```
-uv run datamap prepare <csv|xlsx|folder> --out out/<name>   # read → embed → lay out → group
+# Notes folders only: tidy a copy into an OKF bundle, then write Seshette's documents table
+uv run python convert_to_okf.py <notes folder> out/<name>/okf_bundle
+uv run python okf_to_documents.py out/<name>/okf_bundle --out-dir out/<name>
+
+uv run datamap prepare <csv|xlsx|folder|documents.parquet> --out out/<name>   # read → embed → lay out → group
 # Claude reads out/<name>/briefing.md and writes out/<name>/labels.json
-uv run datamap render --out out/<name>                      # map.html + insights.md
+uv run datamap render --out out/<name>                                        # map.html + insights.md
 ```
 
 | Stage | Tool |
 |---|---|
+| Tidy notes into OKF | [`convert_to_okf.py`](convert_to_okf.py), [`okf_to_documents.py`](okf_to_documents.py) |
 | Embed | [sentence-transformers](https://www.sbert.net/) `all-MiniLM-L6-v2`, on the CPU |
 | Lay out | [UMAP](https://github.com/lmcinnes/umap) |
 | Group | [fast_hdbscan](https://github.com/TutteInstitute/fast_hdbscan) |
@@ -104,8 +115,9 @@ uv run datamap render --out out/<name>                      # map.html + insight
 | Render | [DataMapPlot](https://github.com/TutteInstitute/datamapplot), single file |
 
 Options: `prepare` takes `--text-col`, `--title-col` and `--min-cluster-size`. `render` takes
-`--link-base <site URL>`, which makes clicking a dot open that document on a site built
-from the same folder, for example a Hugo site of an OKF bundle.
+`--link-base <site URL>`. Clicking a dot normally opens the original file (for folders and
+OKF bundles); with `--link-base` it opens that document's page on a site built from the same
+folder instead, for example a Hugo site of the OKF bundle.
 
 ## Credits
 

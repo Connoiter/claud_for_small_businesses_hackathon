@@ -286,6 +286,7 @@ dependencies = [
     { name = "pandas" },
     { name = "pyarrow" },
     { name = "pypdf" },
+    { name = "pyyaml" },
     { name = "sentence-transformers" },
     { name = "umap-learn" },
 ]
@@ -303,6 +304,7 @@ requires-dist = [
     { name = "pandas", specifier = ">=2.2" },
     { name = "pyarrow", specifier = "==26.0.0" },
     { name = "pypdf", specifier = ">=5.0" },
+    { name = "pyyaml", specifier = ">=6.0" },
     { name = "sentence-transformers", specifier = "==5.7.0" },
     { name = "umap-learn", specifier = "==0.5.12" },
 ]

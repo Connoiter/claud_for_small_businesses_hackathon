@@ -67,9 +67,12 @@ def write_map(df: pd.DataFrame, labels: dict, path: Path, link_base: str | None 
         "</div>"
     )
     kwargs = {}
-    if link_base and "source_file" in df.columns and df["source_file"].nunique() == len(df):
-        extra["url"] = [page_url(link_base, f) for f in df["source_file"]]
-        kwargs["on_click"] = "window.open(`{url}`, '_blank')"
+    # Clicking a dot opens the document: its own url (the original file for folders and
+    # OKF bundles), or its page on a site built from the same folder when link_base is set.
+    if "url" in df.columns:
+        urls = [page_url(link_base, i) for i in df["id"]] if link_base else df["url"].fillna("")
+        extra["url"] = list(urls)
+        kwargs["on_click"] = "if (`{url}`) window.open(`{url}`, '_blank')"
     dates = _dates(df)
     if dates is not None:
         kwargs.update(histogram_data=dates, histogram_group_datetime_by="month")
@@ -184,10 +187,11 @@ def _worth_a_look(df: pd.DataFrame, flags: dict) -> list[str]:
     return lines if len(lines) > 2 else []
 
 
-def page_url(link_base: str, source_file: str) -> str:
-    """Where Hugo publishes content/<source_file> by default: extension dropped,
-    lowercased, spaces to hyphens, trailing slash. Check against the real site."""
-    slug = re.sub(r"\s+", "-", source_file.rsplit(".", 1)[0].strip()).lower()
+def page_url(link_base: str, doc_id: str) -> str:
+    """Where Hugo publishes content/<doc_id>.md by default (the OKF concept id is the path
+    without .md): lowercased, spaces to hyphens, trailing slash. Check against the real site."""
+    path = re.sub(r"\.(md|markdown|txt)$", "", doc_id.strip(), flags=re.I)
+    slug = re.sub(r"\s+", "-", path).lower()
     return f"{link_base.rstrip('/')}/{quote(slug)}/"
 
 

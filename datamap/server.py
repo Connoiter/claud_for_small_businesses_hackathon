@@ -87,7 +87,7 @@ class Handler(SimpleHTTPRequestHandler):
         path = self.path.split("?", 1)[0]
         if path in ("", "/"):
             self.send_response(302)
-            self.send_header("Location", "/web/")
+            self.send_header("Location", "/web/builder.html")
             self.end_headers()
             return
         if path == "/jobs":
@@ -424,7 +424,7 @@ def regions(folder: Path) -> list[dict]:
 def serve(port: int = 8000, open_browser: bool = True) -> None:
     JOBS.mkdir(parents=True, exist_ok=True)
     httpd = ThreadingHTTPServer(("127.0.0.1", port), Handler)
-    url = f"http://localhost:{port}/web/"
+    url = f"http://localhost:{port}/web/builder.html"
     print(f"Datamap is running at {url}  (Ctrl+C to stop)")
     if not shutil.which("claude"):
         print("  Claude Code isn't installed, so groups will be named by keywords.")

@@ -5,7 +5,7 @@ Business is a Claude Code skill, `/datamap`, that turns your reviews, survey
 answers, notes or website into an interactive map of what's in them, plus a
 plain-language report on what to do next.
 
-**[See the live demo →](https://connoiter.github.io/claude_for_small_businesses_hackathon/)** Three real datamaps (a consultant's 585 notes, thinkspace's 629-page website and Sourcegraph's handbook), each with an example conversation showing how an owner works with the map. No install needed.
+**[See the live demo →](https://connoiter.github.io/claude_for_small_businesses_hackathon/)** Three real datamaps made with `/datamap` (a consultant's 587 notes, thinkspace's 629-page website and Sourcegraph's 835-page handbook), each next to an example conversation showing how an owner works with the map, plus two much bigger maps from [connoiter.com/datamap](https://connoiter.com/datamap/). No install needed.
 
 ## Introduction
 
@@ -14,11 +14,12 @@ for second brains, Google's Open Knowledge Format (OKF). A few minutes later
 you get **a visual map of your small business's data that your agent has in
 its wiki.** Similar comments sit together, each group is named in plain words,
 and you can hover over any dot to read the comment. It's one file you can
-email to your partner or staff, and it opens in any browser, even in airplane
-mode.
+email to your partner or staff. It opens in any browser and keeps working
+offline, because the map's data and code are inside the file.
 
-You don't need to write any code, and your data stays on your computer.
+You don't need to write any code, and your files stay on your computer:
 Claude only reads a few examples from each group so it can name the groups.
+(For a website, Claude reads the public pages itself to save them as notes.)
 
 ### Example: a café's reviews
 
@@ -56,8 +57,9 @@ agents" and "Google Ads and keyword research".
   ([uv](https://docs.astral.sh/uv/) and a few Python packages) for you.
 - A CSV or Excel export of your customer text, or a folder of documents
   (`.md`, `.txt`, `.pdf`). Most review sites, survey tools and help desks
-  have an "Export to CSV" button. For OKF bundles, the reserved `index.md`
-  and `log.md` are skipped.
+  have an "Export to CSV" button. Or just a website address.
+  In notes folders, `log.md` and folder-listing `index.md` files are skipped;
+  `index.md` pages with real writing are kept (as `overview.md`).
 
 ### Set up (once)
 
@@ -113,7 +115,7 @@ Everything is saved in `out/<name>/`:
 
 | File | What it is |
 |---|---|
-| `map.html` | The interactive map. Hover over dots to read comments, search at the top, filter by month at the bottom. |
+| `map.html` | The interactive map. Hover over dots to read them, search at the top, and filter by month at the bottom when the data has dates. Ask for the *CORD-19 style* to get serif titles and outlined groups. |
 | `insights.md` | The report: fix these first, every group with quotes and a suggested action, spam and double posts. |
 | `labels.json` | The group names Claude wrote. Edit any of them and run `datamap render` again. |
 
@@ -122,7 +124,8 @@ Everything is saved in `out/<name>/`:
 Reading your files, building the map and grouping comments all happen on your
 computer, using a small open-source model. To name the groups, Claude reads
 only the briefing file: about 8 typical comments per group plus the 15 most
-unusual ones. Nothing else is uploaded.
+unusual ones. Nothing else from your files is uploaded. When you map a
+website, Claude reads its public pages to save them as notes.
 
 ## Built on the King Tutte Datamap Scrolls
 
@@ -189,9 +192,15 @@ uv run datamap render --out out/<name>                                        # 
 | Render | [DataMapPlot](https://github.com/TutteInstitute/datamapplot), single file |
 
 Options: `prepare` takes `--text-col`, `--title-col` and `--min-cluster-size`. `render` takes
-`--link-base <site URL>`. Clicking a dot normally opens the original file (for folders and
+`--style site|cord19` (the default look matches the demo page; `cord19` mimics DataMapPlot's
+CORD-19 map) and `--link-base <site URL>`. Clicking a dot normally opens the original file (for folders and
 OKF bundles); with `--link-base` it opens that document's page on a site built from the same
 folder instead, for example a Hugo site of the OKF bundle.
+
+`uv run datamap serve` runs the earlier file-upload prototype (`web/builder.html`) locally with
+the pipeline behind its Build button; groups are named with headless Claude Code. The demo
+site (`web/index.html`) is static and published to GitHub Pages by
+[`.github/workflows/pages.yml`](.github/workflows/pages.yml); see [`web/README.md`](web/README.md).
 
 ## Hackathon
 
@@ -213,20 +222,23 @@ The demo video follows the same five criteria; its script and shot list are in
 
 #### Does it work
 
-Yes, end to end. `/datamap` reads a CSV, Excel file or
-folder, groups the text, has Claude name the groups, and writes the map and
-report. Both examples in [`examples/`](examples) are real output from it: 260
-café reviews in [`lakeview-cafe`](examples/lakeview-cafe) and 398 real notes in
-[`knowledgeforge`](examples/knowledgeforge). An owner could try it today on
-their own review export.
+Yes, end to end. `/datamap` reads a CSV, Excel file,
+folder or website, groups the text, has Claude name the groups, and writes the
+map and report. Everything in [`examples/`](examples) is real output from it:
+260 café reviews ([`lakeview-cafe`](examples/lakeview-cafe)), 238 yoga survey
+answers ([`northside-yoga`](examples/northside-yoga)), 241 grooming reviews
+([`rainier-paws`](examples/rainier-paws)) and 398 real notes
+([`knowledgeforge`](examples/knowledgeforge)). So are the three maps on the
+[demo site](https://connoiter.github.io/claude_for_small_businesses_hackathon/):
+587 KnowledgeForge notes, 629 pages of thinkspace.com and 835 pages of
+Sourcegraph's handbook. An owner could try it today on their own review export.
 
 #### Ease of setup for a small business
 
 No code and no download. Ask Claude to install the skill from this
 repository's URL, then type `/datamap`. Claude asks which file to use and
 installs `uv` if needed. The result is a single `map.html` that opens in any
-browser and can be emailed to staff. Our team set it up cold from this README
-to check that.
+browser and can be emailed to staff.
 
 #### Impact on the business's operations
 
@@ -255,9 +267,10 @@ were silently hiding all their tags.
 Every member had a distinct role, listed in the table below:
 owner research and pitch, the Claude skill and report, the map and demo video,
 the pipeline, and a cold-start test of the README. Work landed as separate pull
-requests ([#1](https://github.com/Connoiter/claude_for_small_businesses_hackathon/pull/1),
-[#2](https://github.com/Connoiter/claude_for_small_businesses_hackathon/pull/2),
-[#3](https://github.com/Connoiter/claude_for_small_businesses_hackathon/pull/3)).
+requests from different members: the skill and pipeline ([#1](https://github.com/Connoiter/claude_for_small_businesses_hackathon/pull/1),
+[#2](https://github.com/Connoiter/claude_for_small_businesses_hackathon/pull/2)), the owner web page ([#3](https://github.com/Connoiter/claude_for_small_businesses_hackathon/pull/3), [#5](https://github.com/Connoiter/claude_for_small_businesses_hackathon/pull/5)),
+and the OKF converter and CORD-19 style ([#6](https://github.com/Connoiter/claude_for_small_businesses_hackathon/pull/6), [#7](https://github.com/Connoiter/claude_for_small_businesses_hackathon/pull/7),
+[#8](https://github.com/Connoiter/claude_for_small_businesses_hackathon/pull/8)).
 
 ### Team
 

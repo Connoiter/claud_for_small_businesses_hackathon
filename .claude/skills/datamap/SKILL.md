@@ -143,6 +143,10 @@ uv run datamap render --out out/<run-name>
 
 If it reports a missing or empty label, fix `labels.json` and run it again.
 
+If the owner asks for the CORD-19 look (serif title, outlined groups, like
+DataMapPlot's CORD-19 map), add `--style cord19`. Re-rendering only redraws the
+map, so switching looks is quick.
+
 For notes and documents, clicking a dot opens the original file. Those links
 only work on this computer. If the notes are also published as a website (for
 example a Hugo site built from the same OKF bundle), add

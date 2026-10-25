@@ -213,9 +213,9 @@ were silently hiding all their tags.
 **Teamwork.** Every member had a distinct role, listed in the table below:
 owner research and pitch, the Claude skill and report, the map and demo video,
 the pipeline, and a cold-start test of the README. Work landed as separate pull
-requests ([#1](https://github.com/Connoiter/claud_for_small_businesses_hackathon/pull/1),
-[#2](https://github.com/Connoiter/claud_for_small_businesses_hackathon/pull/2),
-[#3](https://github.com/Connoiter/claud_for_small_businesses_hackathon/pull/3)).
+requests ([#1](https://github.com/Connoiter/claude_for_small_businesses_hackathon/pull/1),
+[#2](https://github.com/Connoiter/claude_for_small_businesses_hackathon/pull/2),
+[#3](https://github.com/Connoiter/claude_for_small_businesses_hackathon/pull/3)).
 
 ## Team
 

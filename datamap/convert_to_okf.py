@@ -8,7 +8,8 @@ What it changes, and nothing else:
   * gives files with no front matter a minimal block (type + title)
   * strips front matter from index.md files, as OKF section 8 requires
   * repairs YAML broken by unquoted colons, e.g. `title: Foo: bar`
-  * renames index.md files that are real pages (40+ words of prose, as site
+  * renames index.md files that are real pages (40+ words of prose outside
+    link-list lines like `- [Page](page.md) - summary`, as site
     generators like Hugo and Next produce) to overview.md, because OKF
     reserves index.md for directory listings and they would otherwise be
     skipped; the bundle root index.md is left alone
@@ -45,7 +46,9 @@ def is_content_page(body, min_words=40):
         line = line.strip()
         if not line or line.startswith("#"):
             continue
-        if re.fullmatch(r"[-*+]\s+\[[^\]]*\]\([^)]*\)", line):  # - [text](url)
+        # - [text](url), with or without a description after it: a directory listing
+        # entry, whose text only summarises the linked page
+        if re.match(r"[-*+]\s+\[[^\]]*\]\([^)]*\)", line):
             continue
         line = re.sub(r"!?\[([^\]]*)\]\([^)]*\)", r"\1", line)  # keep link text only
         words += len(line.split())

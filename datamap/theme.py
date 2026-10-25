@@ -97,10 +97,11 @@ body {{ background: #ffffff; font-family: "{BODY}", {STACK}; color: {INK}; }}
 #title-container {{ margin: 14px 14px 8px !important; padding: 12px 16px !important; max-width: min(520px, 70vw); }}
 #title-container span:first-of-type {{
   font-family: "{DISPLAY}", {STACK} !important; font-weight: 700; color: {INK} !important;
+  font-size: 20px !important;
   letter-spacing: -0.015em; line-height: 1.15; display: inline-block;
 }}
 #title-container span:last-of-type {{
-  font-family: "{BODY}", {STACK} !important; color: {MUTED} !important;
+  font-family: "{BODY}", {STACK} !important; color: {MUTED} !important; font-size: 13px !important;
   display: inline-block; margin-top: 4px; line-height: 1.4;
 }}
 #title-container br {{ display: none; }}
@@ -143,10 +144,21 @@ datamap.deckgl.setProps({{controller:
 (function () {{
   const search = document.getElementById("text-search");
   if (search) search.placeholder = "Search the map…";
+  // Maps rendered elsewhere can have pin-prick dots; make them easy to see and hover.
+  const enlargeDots = () => {{
+    if (!datamap.pointLayer || (datamap.pointRadiusMinPixels || 0) >= 3) return;
+    datamap.pointRadiusMinPixels = 3;
+    const points = datamap.pointLayer.clone({{radiusMinPixels: 3}});
+    datamap.layers = datamap.layers.map((l) => (l === datamap.pointLayer ? points : l));
+    datamap.pointLayer = points;
+  }};
   const redrawLabels = () => {{
     const old = datamap.labelLayer;
-    if (!old) return false;
+    if (!old) return false;  // labels arrive once the map's data has loaded
+    enlargeDots();
     const fresh = old.clone({{
+      fontFamily: "{DISPLAY}",
+      fontWeight: 600,
       fontSettings: {{sdf: true, buffer: 6, radius: 14, fontSize: 72}},
       getColor: {ink_rgb},
       updateTriggers: {{getColor: "ink"}},
@@ -165,3 +177,27 @@ datamap.deckgl.setProps({{controller:
   }});
 }})();
 """
+
+
+THEME_MARK = "datamap-theme"
+
+
+def restyle(path: Path) -> bool:
+    """Give an already-rendered DataMapPlot map.html this look, e.g. one made by another tool.
+
+    Returns False if the file already has it.
+    """
+    html = path.read_text(encoding="utf-8")
+    if THEME_MARK in html:
+        return False
+    style = f'<style id="{THEME_MARK}">\n{custom_css()}\n</style>\n'
+    # DataMapPlot creates `datamap` in a module script (and sets window.datamap). Modules run
+    # in document order after parsing, so a module placed last runs once the map exists.
+    script = f'<script type="module" id="{THEME_MARK}-js">\n{custom_js()}\n</script>\n'
+    head, end = html.find("</head>"), html.rfind("</html>")
+    if head < 0 or "datamap" not in html:
+        raise ValueError(f"{path} doesn't look like a DataMapPlot map")
+    html = html[:end] + script + html[end:] if end >= 0 else html + script
+    html = html[:head] + style + html[head:]
+    path.write_text(html, encoding="utf-8")
+    return True

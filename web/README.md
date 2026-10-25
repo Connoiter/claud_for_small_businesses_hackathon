@@ -22,6 +22,7 @@ The last step shows the pipeline's `map.html` in a frame, a list of regions, and
 
 ## Files
 - `index.html`: the site. The Lakeview and KnowledgeForge samples load `../examples/*/map.html` and `insights.md`, so serve the repository root, not just this folder: `python3 -m http.server` from the root, then open http://localhost:8000/web/.
+- Maps use this page's look (fonts, colours, cards) from `datamap/theme.py`. Each `map.html` embeds Bricolage Grotesque and Atkinson Hyperlegible (both SIL OFL 1.1, licenses in `datamap/assets/fonts/`), so it looks the same offline.
 - `vendor/marked.min.js`: marked 12.0.2 (MIT), kept local so the Report tab renders without internet.
 - `teashop-datamap.html`: the Fern & Kettle customer map (made with a simpler stand-in pipeline), with its scripts inlined.
 

@@ -12,16 +12,11 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from . import theme
 from .ingest import rating_column
 from .prepare import NOISE, typical_examples
 
 NOISE_LABEL = "Fits no group"
-# DataMapPlot's default scroll zoom (speed 0.01, smoothed) feels sluggish, especially on
-# trackpads. About 2x per mouse-wheel notch, without the lagging animation.
-FASTER_ZOOM_JS = (
-    "datamap.deckgl.setProps({controller: "
-    "{scrollZoom: {speed: 0.03, smooth: false}, doubleClickZoom: true, touchZoom: true}});"
-)
 LOW_RATING = 3.0
 
 
@@ -65,13 +60,6 @@ def write_map(df: pd.DataFrame, labels: dict, path: Path, link_base: str | None 
             "meta": [html.escape(_meta_line(row, rating)) for _, row in df.iterrows()],
         }
     )
-    template = (
-        '<div style="max-width:380px">'
-        '<div style="font-weight:600;margin-bottom:4px">{doc_title}</div>'
-        '<div style="font-size:12px;color:#777;margin-bottom:6px">{meta}</div>'
-        '<div style="font-size:13px;line-height:1.35">{snippet}</div>'
-        "</div>"
-    )
     kwargs = {}
     # Clicking a dot opens the document: its own url (the original file for folders and
     # OKF bundles), or its page on a site built from the same folder when link_base is set.
@@ -81,24 +69,28 @@ def write_map(df: pd.DataFrame, labels: dict, path: Path, link_base: str | None 
         kwargs["on_click"] = "if (`{url}`) window.open(`{url}`, '_blank')"
     dates = _dates(df)
     if dates is not None:
-        kwargs.update(histogram_data=dates, histogram_group_datetime_by="month")
+        kwargs.update(
+            histogram_data=dates,
+            histogram_group_datetime_by="month",
+            histogram_settings=theme.HISTOGRAM_SETTINGS,
+        )
 
     plot = datamapplot.create_interactive_plot(
         df[["x", "y"]].to_numpy(),
         layer,
         hover_text=df["text"].map(lambda t: _shorten(t, 120)).tolist(),
         title=labels.get("title", "Datamap"),
-        sub_title=f"{len(df)} documents grouped by meaning. Hover a dot to read it; search above.",
-        title_font_size=26,
-        sub_title_font_size=15,
-        custom_js=FASTER_ZOOM_JS,
+        sub_title=f"{len(df):,} entries, grouped by meaning. Hover a dot to read it.",
+        custom_css=theme.custom_css(),
+        custom_js=theme.custom_js(),
         noise_label=NOISE_LABEL,
         extra_point_data=extra,
-        hover_text_html_template=template,
+        hover_text_html_template=theme.TOOLTIP_TEMPLATE,
         enable_search=True,
         point_radius_min_pixels=4,
         point_radius_max_pixels=14,
         offline_mode=True,
+        **theme.PLOT_KWARGS,
         **kwargs,
     )
     plot.save(str(path))

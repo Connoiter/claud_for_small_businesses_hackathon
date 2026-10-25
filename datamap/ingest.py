@@ -112,7 +112,7 @@ def _load_documents_table(path: Path) -> pd.DataFrame:
         meta = meta.replace("", None)
         df = df.merge(meta, on="id", how="left")
         if "web_url" in df.columns:
-            # Notes made from web pages (datamap crawl) link back to the page, not the file.
+            # Notes Claude saved from web pages (front matter `resource`) link back to the page.
             if "url" in df.columns:
                 df["url"] = df["web_url"].fillna(df["url"])
             df = df.drop(columns="web_url")

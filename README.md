@@ -98,9 +98,8 @@ The skill is [`.claude/skills/datamap/SKILL.md`](.claude/skills/datamap/SKILL.md
 It drives a short command line:
 
 ```
-# Websites: read each page into a note. Notes folders (and crawled sites): tidy a copy into
-# an OKF bundle, then write Seshette's documents table
-uv run datamap crawl <https://site/> --out out/<name>/site   # websites only: one note per page
+# Notes folders only (a website becomes one when Claude saves its pages as notes):
+# tidy a copy into an OKF bundle, then write Seshette's documents table
 uv run datamap okf <notes folder> --out out/<name>
 
 uv run datamap prepare <csv|xlsx|folder|documents.parquet> --out out/<name>   # read → embed → lay out → group

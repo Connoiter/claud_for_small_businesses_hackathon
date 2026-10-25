@@ -8,7 +8,8 @@ Answers the handoff contract in web/README.md:
 Everything else is served as static files from the repository root, so the page can
 load examples/ and each job's output under out/jobs/.
 
-Sources are uploads, GitHub repos (cloned) or websites (crawled into notes, same site only).
+Sources are uploads or GitHub repos (cloned). Websites are read by Claude through the
+/datamap skill, not by this server.
 Jobs run one at a time: okf (gather sources, tidy notes into an OKF bundle) -> embed ->
 cluster -> name (Claude Code, headless) -> render.
 """
@@ -215,12 +216,10 @@ def gather_sources(manifest: dict, folder: Path) -> list[tuple[dict, Path]]:
             found.append((src, clone(src, folder / "clones" / sid)))
             continue
         if src.get("kind") == "website":
-            from .crawl import crawl
-
-            site = folder / "sites" / sid
-            crawl(str(src.get("url") or ""), site, max_pages=int(src.get("max_pages") or 150))
-            found.append((src, site))
-            continue
+            raise SystemExit(
+                f"websites are read by Claude, not this server. In the Claude app, run "
+                f"/datamap and give it {src.get('url') or 'the address'}"
+            )
         path = folder / "uploads" / sid
         if not path.exists():
             path = bundled_sample(src)  # sample sources on the page send no files

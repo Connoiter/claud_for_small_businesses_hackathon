@@ -1,6 +1,6 @@
 ---
 name: datamap
-description: Turn a small business's pile of text into an interactive map of what's in it plus a plain-language report with suggested actions. Works on customer text (reviews, survey answers, support emails, feedback forms), on notes (an Obsidian vault, a wiki, a "second brain", an OKF knowledge bundle, a folder of documents) and on websites (crawled page by page). Use when the user types /datamap, asks what their customers are saying, wants to make sense of a lot of reviews or feedback, or wants to see what is in their notes or documents.
+description: Turn a small business's pile of text into an interactive map of what's in it plus a plain-language report with suggested actions. Works on customer text (reviews, survey answers, support emails, feedback forms), on notes (an Obsidian vault, a wiki, a "second brain", an OKF knowledge bundle, a folder of documents) and on websites (Claude reads the pages itself). Use when the user types /datamap, asks what their customers are saying, wants to make sense of a lot of reviews or feedback, or wants to see what is in their notes or documents.
 ---
 
 # /datamap: see everything in your business's text at once
@@ -25,18 +25,27 @@ Pick a short run name, e.g. `reviews-oct` or `my-notes`. Then decide the route:
 | CSV or Excel export (reviews, survey, help desk, form answers) | Go to step 3 with the file. |
 | Folder of markdown notes (wiki, Obsidian vault, second brain, OKF bundle) | Step 2 first, then step 3. |
 | Folder of PDFs or `.txt` files | Go to step 3 with the folder. |
-| A website (their own site, help center, blog) | Crawl it (below), then step 2 with the crawled folder, then step 3. |
+| A website (their own site, help center, blog) | Read it yourself (below), then step 2 with that folder, then step 3. |
 
-Website: read it page by page into a folder of notes, one note per page:
+Website: read it yourself with your web tools and save one markdown note per
+page in `out/<run-name>/site/` (file name from the page's path, e.g.
+`meeting-rooms.md`). Find the pages from the site's sitemap (`/sitemap.xml`,
+`/sitemap_index.xml` or `/wp-sitemap.xml`) or its menus. Skip category, tag,
+author and other listing pages; they only repeat other pages. Start each note
+with front matter, then the page's main text without menus or footers:
 
 ```
-uv run datamap crawl "<https://their site/>" --out out/<run-name>/site
+---
+type: Web Page
+title: <the page's title>
+resource: <the page's address>
+date: <YYYY-MM-DD, only if the page shows one>
+---
 ```
 
-It stays on that site (and under the starting path, so start at `/blog/` to map
-only the blog), follows robots.txt, waits between requests, and stops at 150
-pages (`--max-pages` to change). Only crawl a site the owner runs or has
-permission to read. Clicking a dot on the final map opens the live page.
+Aim for the pages that matter, up to about 150, and tell the owner how many you
+saved. Only read a site the owner runs or has permission to read, and respect
+its robots.txt. Clicking a dot on the final map opens the live page.
 
 CSV/Excel: the text column is detected automatically (the one with the longest
 entries). If the wrong one gets picked, rerun with `--text-col "<column name>"`.

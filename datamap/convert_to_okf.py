@@ -53,6 +53,8 @@ def is_content_page(body, min_words=40):
 
 
 def convert(src: Path, dst: Path):
+    if not src.is_dir():
+        sys.exit(f"Can't find the folder {src}. Check the name and try again.")
     if dst.exists():
         sys.exit(f"{dst} already exists; pick a new output folder")
     shutil.copytree(src, dst, ignore=shutil.ignore_patterns(".*"))

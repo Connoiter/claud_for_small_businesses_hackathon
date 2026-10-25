@@ -192,7 +192,7 @@ The demo video follows the same five criteria; its script and shot list are in
 
 #### Does it work
 
-Yes, end to end. `/datamap` reads a CSV, Excel file or
+Yes, end to end. `/datamap` (the OKFifier part) reads a CSV, Excel file or
 folder, groups the text, has Claude name the groups, and writes the map and
 report. Both examples in [`examples/`](examples) are real output from it: 260
 café reviews in [`lakeview-cafe`](examples/lakeview-cafe) and 398 real notes in
@@ -209,13 +209,21 @@ to check that.
 
 #### Impact on the business's operations
 
-Owners collect reviews, surveys and
-support emails but rarely read them all. The report turns them into a short
-"fix these first" list with how many people raised each issue, their average
-rating and a concrete next step, for example: 22 people, 1.9★, "send the ready
-notification at hand-off, not when the ticket prints." It also flags spam and
-double posts so they don't skew the picture. For notes, it shows which areas of
-an owner's know-how could become a paid service, guide or workshop.
+All small businesses of any level of AI sophistication are building out their
+own private LLM Wiki, second brain, OpenWiki, GBrain knowledge base. The
+industry is converging on [Open Knowledge Format (OKF)](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md). 
+
+This Agent Skill will help them make their knowledge base OKF compliant if needed 
+and then datamap it. The output is a static HTML file, which loads correctly
+from a file URL. No backend need at all, no complex installs, no configuring
+and adopting a complex RAG pipeline. Nonetheless, many of the benefits
+of such are provided by the datamap. 
+
+This way small businesses can instantly and simply start on their LLM Wiki
+journey with nothing more than showing Claude the repo:
+
+https://github.com/Connoiter/claude_for_small_businesses_hackathon
+
 
 #### Creativity
 

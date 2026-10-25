@@ -1,11 +1,13 @@
-"""Turn whatever the owner has (a CSV export or a folder of files) into one table of documents.
+"""Turn whatever the owner has (a CSV export, a folder of files, or a Seshette `documents`
+table) into one table of documents.
 
 Every document gets an `id`, a `title`, its `text`, and the file it came from.
-Any other CSV columns (rating, date, source, ...) are kept as extra metadata.
+Any other CSV columns (rating, date, source, url, ...) are kept as extra metadata.
 """
 
 from __future__ import annotations
 
+import json
 import re
 from pathlib import Path
 
@@ -25,8 +27,13 @@ def load(path: Path, text_col: str | None = None, title_col: str | None = None) 
         df = _load_csv(path, text_col, title_col)
     elif path.suffix.lower() in {".xlsx", ".xls"}:
         df = _load_table(pd.read_excel(path), path, text_col, title_col)
+    elif path.suffix.lower() == ".parquet":
+        df = _load_documents_table(path)
     else:
-        raise SystemExit(f"Don't know how to read {path}. Give a CSV, an Excel file, or a folder.")
+        raise SystemExit(
+            f"Don't know how to read {path}. Give a CSV, an Excel file, a folder, "
+            "or a documents.parquet from okf_to_documents.py."
+        )
 
     df["text"] = df["text"].fillna("").astype(str).map(_clean)
     df = df[df["text"].str.len() > 0].reset_index(drop=True)
@@ -77,6 +84,44 @@ def _load_table(raw: pd.DataFrame, path: Path, text_col, title_col) -> pd.DataFr
     return df
 
 
+OKF_METADATA_COLUMNS = ("type", "domain", "topic", "trust_tier", "status", "stale_after")
+
+
+def _load_documents_table(path: Path) -> pd.DataFrame:
+    """Seshette's `documents` table (id, text, title, url), as okf_to_documents.py writes it.
+
+    If its sidecar okf_metadata.parquet sits next to it, the OKF fields come along too.
+    """
+    df = pd.read_parquet(path)
+    missing = {"id", "text"} - set(df.columns)
+    if missing:
+        raise SystemExit(f"{path} has no {', '.join(sorted(missing))} column.")
+    df["id"] = df["id"].astype(str)
+    if "title" not in df.columns:
+        df["title"] = None
+    df["source_file"] = df["id"]
+
+    sidecar = path.with_name("okf_metadata.parquet")
+    if sidecar.exists():
+        sidecar_df = pd.read_parquet(sidecar)
+        keep = [c for c in OKF_METADATA_COLUMNS if c in sidecar_df.columns]
+        meta = sidecar_df[["id", *keep]].copy()
+        if "front_matter" in sidecar_df.columns:
+            meta["date"] = [_front_matter_date(s) for s in sidecar_df["front_matter"]]
+        meta = meta.replace("", None)
+        df = df.merge(meta, on="id", how="left")
+    return df.dropna(axis=1, how="all")
+
+
+def _front_matter_date(raw: str | None) -> str | None:
+    try:
+        fm = json.loads(raw) if raw else {}
+    except (TypeError, ValueError):
+        return None
+    value = fm.get("date") or fm.get("created")
+    return str(value) if value else None
+
+
 def _guess_text_column(raw: pd.DataFrame) -> str:
     """The free-text column is the one with the longest strings on average."""
     best, best_len = None, 0.0
@@ -111,6 +156,7 @@ def _load_folder(folder: Path) -> pd.DataFrame:
                 "title": meta.get("title") or f.stem.replace("_", " ").replace("-", " "),
                 "text": text,
                 "source_file": str(f.relative_to(folder)).replace("\\", "/"),
+                "url": f.resolve().as_uri(),
                 "type": meta.get("type"),
                 "description": meta.get("description"),
                 "domain": meta.get("domain"),

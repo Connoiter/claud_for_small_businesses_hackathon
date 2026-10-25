@@ -37,15 +37,13 @@ The mapper skips reserved files (`index.md`, `log.md`) and hidden folders, check
 
 ## Running it
 
-From this repo, with KnowledgeForge cloned next to it:
+The `/datamap` skill runs these two steps for you whenever you give it a folder
+of notes. To run them by hand, from this repo with KnowledgeForge cloned next to
+it (`uv` installs the dependencies from `pyproject.toml` on first run):
 
 ```
-python -m venv .venv
-source .venv/Scripts/activate      # Windows Git Bash; use .venv/bin/activate on Mac or Linux
-pip install pandas pyarrow pyyaml
-
-python convert_to_okf.py ../knowledgeforge/wiki kf_bundle
-python okf_to_documents.py kf_bundle --out-dir out
+uv run python convert_to_okf.py ../knowledgeforge/wiki kf_bundle
+uv run python okf_to_documents.py kf_bundle --out-dir out
 ```
 
 Expected output:
@@ -71,4 +69,15 @@ In the event's own survey of small business owners, unreliable or inaccurate AI 
 
 ## Next steps
 
-Run the Seshette pipeline (Embed, Reduce, Cluster, Label, Render) on `out/documents.parquet`. Use `okf_metadata.parquet` to color points by type or trust tier. Decide with the bundle owner what to do about the duplicate.
+`datamap prepare` reads `out/documents.parquet` directly, along with the type,
+domain, topic, trust tier and dates from `okf_metadata.parquet` next to it:
+
+```
+uv run datamap prepare out/documents.parquet --out out/kf
+# Claude names the groups in out/kf/labels.json (the skill does this)
+uv run datamap render --out out/kf
+```
+
+Clicking a dot on the map opens that note's file. Still to do: color points by
+type or trust tier, and decide with the bundle owner what to do about the
+duplicate.

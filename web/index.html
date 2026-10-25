@@ -389,12 +389,15 @@ footer .wrap { display: grid; gap: 8px; }
         <h3>Set up once</h3>
         <ol>
           <li>Get <a href="https://claude.com/claude-code">Claude Code</a>, in the Claude desktop app or the terminal. Any paid Claude plan works.</li>
-          <li>Download this project from <a href="https://github.com/Connoiter/claude_for_small_businesses_hackathon">GitHub</a> (Code → Download ZIP) and open the folder in Claude Code.</li>
-          <li>Type <code>/datamap</code> and say what to map. Claude installs what it needs the first time.</li>
+          <li>Ask Claude: <i>"Install the /datamap skill from <a href="https://github.com/Connoiter/claude_for_small_businesses_hackathon">github.com/Connoiter/claude_for_small_businesses_hackathon</a>"</i>. It downloads the project and sets everything up. No ZIP, no code.</li>
+          <li>Type <code>/datamap</code> in any folder and say what to map.</li>
         </ol>
         <p class="note">Mapping runs on your computer. Claude reads short samples from each region to name it.</p>
       </div>
-      <pre><span class="c"># In Claude Code, inside the project folder</span>
+      <pre><span class="c"># Once: ask Claude to install it</span>
+Install the /datamap skill from https://github.com/Connoiter/claude_for_small_businesses_hackathon
+
+<span class="c"># Then, in any folder</span>
 /datamap reviews.csv
 /datamap ~/Notes/my-vault
 /datamap https://yourbusiness.com

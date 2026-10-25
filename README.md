@@ -52,8 +52,8 @@ agents" and "Google Ads and keyword research".
 ### What you need
 
 - [Claude Code](https://claude.com/claude-code), with any paid Claude plan.
-- [uv](https://docs.astral.sh/uv/getting-started/installation/), a free
-  one-line install. Claude can install it for you.
+- Nothing else to download yourself. Claude installs the skill and its tools
+  ([uv](https://docs.astral.sh/uv/) and a few Python packages) for you.
 - A CSV or Excel export of your customer text, or a folder of documents
   (`.md`, `.txt`, `.pdf`). Most review sites, survey tools and help desks
   have an "Export to CSV" button. For OKF bundles, the reserved `index.md`
@@ -61,9 +61,30 @@ agents" and "Google Ads and keyword research".
 
 ### Set up (once)
 
-1. Download this project: on GitHub, click **Code → Download ZIP** and unzip it.
-   (Or `git clone` it.)
-2. Open the folder in Claude Code.
+Open Claude Code (in the Claude desktop app or the terminal) and ask:
+
+```
+Install the /datamap skill from https://github.com/Connoiter/claude_for_small_businesses_hackathon
+```
+
+That's it: no ZIP, no code. Claude downloads the project, installs what it
+needs and makes `/datamap` available in every folder, so you can run it right
+where your files are. To get improvements later, ask Claude to *"update the
+datamap skill"*.
+
+<details>
+<summary>What Claude does when it installs the skill</summary>
+
+1. Clones the repository, for example into `~/datamap-skill`.
+2. Runs `uv sync` there (installing [uv](https://docs.astral.sh/uv/) first if
+   it's missing).
+3. Links the skill into your personal skills folder so it works anywhere:
+   - macOS / Linux: `ln -s ~/datamap-skill/.claude/skills/datamap ~/.claude/skills/datamap`
+   - Windows: `mklink /J "%USERPROFILE%\.claude\skills\datamap" "%USERPROFILE%\datamap-skill\.claude\skills\datamap"`
+
+Updating is `git pull` in that folder. Opening the cloned folder itself in
+Claude Code also works; the skill is found there automatically.
+</details>
 
 ### Use it
 
@@ -201,8 +222,8 @@ their own review export.
 
 #### Ease of setup for a small business
 
-No code. Download the ZIP, open the
-folder in Claude Code, type `/datamap`. Claude asks which file to use and
+No code and no download. Ask Claude to install the skill from this
+repository's URL, then type `/datamap`. Claude asks which file to use and
 installs `uv` if needed. The result is a single `map.html` that opens in any
 browser and can be emailed to staff. Our team set it up cold from this README
 to check that.

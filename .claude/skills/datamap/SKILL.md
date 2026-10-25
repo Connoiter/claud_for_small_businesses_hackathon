@@ -11,7 +11,16 @@ Talk to them in plain words: say "groups", "map" and "report", never
 every command yourself.
 
 All commands run from the repository root: the folder that holds
-`pyproject.toml`, two levels above this skill's folder.
+`pyproject.toml` and `.claude/skills/datamap`. When this skill was installed by
+linking it into `~/.claude/skills/`, find that folder with
+`git -C <this skill's folder> rev-parse --show-toplevel` (it follows the link).
+The owner's files can be anywhere; pass their full path.
+
+If someone asks to install this skill from the repository's URL: clone it (for
+example to `~/datamap-skill`), run `uv sync` there (install uv first if it's
+missing), and link `.claude/skills/datamap` into `~/.claude/skills/datamap`
+(`ln -s` on macOS/Linux, `mklink /J` on Windows). Then tell them to type
+`/datamap` in any folder. To update, `git pull` in the clone.
 
 ## 1. Find their data
 

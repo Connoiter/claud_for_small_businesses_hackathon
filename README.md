@@ -1,9 +1,9 @@
 # Datamaps for Small Business
 
-Map the oceans of data in your small business's LLM Wiki. Datamaps for Small
-Business is a Claude Code skill, `/datamap`, that turns your reviews, survey
-answers, notes or website into an interactive map of what's in them, plus a
-plain-language report on what to do next.
+Map the oceans of data in your small business's LLM Wiki. This repo
+contains an Agent Skill, `/datamap`, that turns your Open Knowledge
+Format (OKF) formatted second brain, OpenWiki, LLM Wiki,
+etc. Into a highly visual and interacive datamap.
 
 **[See the live demo →](https://connoiter.github.io/claude_for_small_businesses_hackathon/)** Three real datamaps made with `/datamap` (a consultant's 587 notes, thinkspace's 629-page website and Sourcegraph's 835-page handbook), each next to an example conversation showing how an owner works with the map, plus two much bigger maps from [connoiter.com/datamap](https://connoiter.com/datamap/). No install needed.
 
@@ -20,6 +20,16 @@ offline, because the map's data and code are inside the file.
 You don't need to write any code, and your files stay on your computer:
 Claude only reads a few examples from each group so it can name the groups.
 (For a website, Claude reads the public pages itself to save them as notes.)
+
+### Example: your own notes
+
+It works on your own notes too. Point it at a folder of documents, such
+as an Obsidian vault, a "second brain", or an
+[OKF](https://www.gitbook.com/blog/what-is-okf-open-knowledge-format) bundle,
+and it shows what you know and which topics you could sell as a service. See
+[`examples/knowledgeforge`](examples/knowledgeforge): 398 notes from a solo
+consultant's knowledge base, grouped into 16 areas like "Running teams of AI
+agents" and "Google Ads and keyword research".
 
 ### Example: a café's reviews
 
@@ -38,15 +48,6 @@ From the example report:
 > 3. **Loyalty app losing points**: 15 people, average 2.3★. Restore lost points
 >    for anyone with a screenshot.
 
-### Example: your own notes
-
-It works on your own notes too. Point it at a folder of documents, such
-as an Obsidian vault, a "second brain", or an
-[OKF](https://www.gitbook.com/blog/what-is-okf-open-knowledge-format) bundle,
-and it shows what you know and which topics you could sell as a service. See
-[`examples/knowledgeforge`](examples/knowledgeforge): 398 notes from a solo
-consultant's knowledge base, grouped into 16 areas like "Running teams of AI
-agents" and "Google Ads and keyword research".
 
 ## Getting started
 
@@ -55,11 +56,11 @@ agents" and "Google Ads and keyword research".
 - [Claude Code](https://claude.com/claude-code), with any paid Claude plan.
 - Nothing else to download yourself. Claude installs the skill and its tools
   ([uv](https://docs.astral.sh/uv/) and a few Python packages) for you.
-- A CSV or Excel export of your customer text, or a folder of documents
-  (`.md`, `.txt`, `.pdf`). Most review sites, survey tools and help desks
-  have an "Export to CSV" button. Or just a website address.
-  In notes folders, `log.md` and folder-listing `index.md` files are skipped;
-  `index.md` pages with real writing are kept (as `overview.md`).
+- Ideally an OKF Bundle but the skill can also make OKF Bundles out of,
+  say, CSV or Excel export of your customer text, or a folder of
+  documents (`.md`, `.txt`, `.pdf`). 
+  
+  
 
 ### Set up (once)
 
@@ -97,7 +98,7 @@ Type:
 ```
 
 Claude asks which file or folder to map, runs everything, names the groups,
-and opens the map. You can also just say *"what are my customers saying in
+and opens the map. You can also just say, for example, *"what are my customers saying in
 reviews.csv?"* or *"what's in my notes folder?"* or *"map my website, https://yourbusiness.com"*
 
 If you give it a folder of notes, Claude first checks and tidies a copy of
@@ -109,23 +110,7 @@ in a real knowledge base.
 The first run downloads a small language model (about 90 MB) and takes a few
 minutes. Later runs take about a minute.
 
-### What you get
 
-Everything is saved in `out/<name>/`:
-
-| File | What it is |
-|---|---|
-| `map.html` | The interactive map. Hover over dots to read them, search at the top, and filter by month at the bottom when the data has dates. Ask for the *CORD-19 style* to get serif titles and outlined groups. |
-| `insights.md` | The report: fix these first, every group with quotes and a suggested action, spam and double posts. |
-| `labels.json` | The group names Claude wrote. Edit any of them and run `datamap render` again. |
-
-### Privacy
-
-Reading your files, building the map and grouping comments all happen on your
-computer, using a small open-source model. To name the groups, Claude reads
-only the briefing file: about 8 typical comments per group plus the 15 most
-unusual ones. Nothing else from your files is uploaded. When you map a
-website, Claude reads its public pages to save them as notes.
 
 ## Built on the King Tutte Datamap Scrolls
 
@@ -222,12 +207,15 @@ The demo video follows the same five criteria; its script and shot list are in
 
 #### Does it work
 
-Yes, end to end. `/datamap` (the OKFifier part) reads a CSV, Excel file,
-folder or website, groups the text, has Claude name the groups, and writes the
-map and report. Everything in [`examples/`](examples) is real output from it:
-260 café reviews ([`lakeview-cafe`](examples/lakeview-cafe)), 238 yoga survey
-answers ([`northside-yoga`](examples/northside-yoga)), 241 grooming reviews
-([`rainier-paws`](examples/rainier-paws)) and 398 real notes
+Yes, end to end. `/datamap` will read an OKF Bundle and generate an HTML file
+that is the datamap there of.
+
+If the data to be datamaped is not OKF compliant, the OKFifier part can read a
+CSV, Excel file, folder or website, groups the text, has Claude name the
+groups, and writes the map and report. Everything in [`examples/`](examples) is
+real output from it: 260 café reviews ([`lakeview-cafe`](examples/lakeview-cafe)),
+238 yoga survey answers ([`northside-yoga`](examples/northside-yoga)), 241
+grooming reviews ([`rainier-paws`](examples/rainier-paws)) and 398 real notes
 ([`knowledgeforge`](examples/knowledgeforge)). So are the three maps on the
 [demo site](https://connoiter.github.io/claude_for_small_businesses_hackathon/):
 587 KnowledgeForge notes, 629 pages of thinkspace.com and 835 pages of

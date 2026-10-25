@@ -1,23 +1,33 @@
 # Datamaps for Small Business
 
+Map the oceans of data in your small business's LLM Wiki. Datamaps for Small
+Business is a Claude Code skill, `/datamap`, that turns your reviews, survey
+answers, notes or website into an interactive map of what's in them, plus a
+plain-language report on what to do next.
+
 **[See the live demo →](https://connoiter.github.io/claude_for_small_businesses_hackathon/)** Three real datamaps (a consultant's 585 notes, thinkspace's 629-page website and Sourcegraph's handbook), each with an example conversation showing how an owner works with the map. No install needed.
 
+<div align="center">
+  <a href="https://en.wikipedia.org/wiki/Mask_of_Tutankhamun">
+    <img src="./images/king_tutte_funerary_mask.png" width="100%" alt="Funerary mask of Bill Tutte" />
+  </a>
+  <p>Funerary mask of Bill Tutte</p>
+</div>
 
-**Map the oceans of data in your LLM Wiki** Give Claude all your data
-in a private LLM Wiki, formatted in the new standard for second
-brains, Google's Open Knowledge Format (OKF). A few minutes later you
-get:
+## Introduction
 
-1. **A visual map of your small business' data that your agent has in
-   its wiki.** Similar comments sit together, each group is named in
-   plain words, and you can hover over any dot to read the
-   comment. It's one file you can email to your partner or staff, and
-   it opens in any browser, even in airplane mode
-
-
+Give Claude all your data in a private LLM Wiki, formatted in the new standard
+for second brains, Google's Open Knowledge Format (OKF). A few minutes later
+you get **a visual map of your small business's data that your agent has in
+its wiki.** Similar comments sit together, each group is named in plain words,
+and you can hover over any dot to read the comment. It's one file you can
+email to your partner or staff, and it opens in any browser, even in airplane
+mode.
 
 You don't need to write any code, and your data stays on your computer.
 Claude only reads a few examples from each group so it can name the groups.
+
+### Example: a café's reviews
 
 > **See it first:** download [`examples/lakeview-cafe/map.html`](examples/lakeview-cafe/map.html)
 > and open it in your browser, then read the
@@ -34,7 +44,9 @@ From the example report:
 > 3. **Loyalty app losing points**: 15 people, average 2.3★. Restore lost points
 >    for anyone with a screenshot.
 
-**It works on your own notes too.** Point it at a folder of documents, such
+### Example: your own notes
+
+It works on your own notes too. Point it at a folder of documents, such
 as an Obsidian vault, a "second brain", or an
 [OKF](https://www.gitbook.com/blog/what-is-okf-open-knowledge-format) bundle,
 and it shows what you know and which topics you could sell as a service. See
@@ -42,7 +54,9 @@ and it shows what you know and which topics you could sell as a service. See
 consultant's knowledge base, grouped into 16 areas like "Running teams of AI
 agents" and "Google Ads and keyword research".
 
-## What you need
+## Getting started
+
+### What you need
 
 - [Claude Code](https://claude.com/claude-code), with any paid Claude plan.
 - [uv](https://docs.astral.sh/uv/getting-started/installation/), a free
@@ -52,13 +66,13 @@ agents" and "Google Ads and keyword research".
   have an "Export to CSV" button. For OKF bundles, the reserved `index.md`
   and `log.md` are skipped.
 
-## Set up (once)
+### Set up (once)
 
 1. Download this project: on GitHub, click **Code → Download ZIP** and unzip it.
    (Or `git clone` it.)
 2. Open the folder in Claude Code.
 
-## Use it
+### Use it
 
 Type:
 
@@ -79,7 +93,7 @@ in a real knowledge base.
 The first run downloads a small language model (about 90 MB) and takes a few
 minutes. Later runs take about a minute.
 
-## What you get
+### What you get
 
 Everything is saved in `out/<name>/`:
 
@@ -89,7 +103,7 @@ Everything is saved in `out/<name>/`:
 | `insights.md` | The report: fix these first, every group with quotes and a suggested action, spam and double posts. |
 | `labels.json` | The group names Claude wrote. Edit any of them and run `datamap render` again. |
 
-## Privacy
+### Privacy
 
 Reading your files, building the map and grouping comments all happen on your
 computer, using a small open-source model. To name the groups, Claude reads
@@ -97,13 +111,6 @@ only the briefing file: about 8 typical comments per group plus the 15 most
 unusual ones. Nothing else is uploaded.
 
 ## Built on the King Tutte Datamap Scrolls
-
-<div align="center">
-  <a href="https://en.wikipedia.org/wiki/Mask_of_Tutankhamun">
-    <img src="./images/king_tutte_funerary_mask.png" width="60%" alt="Funerary mask of Bill Tutte" />
-  </a>
-  <p>Funerary mask of Bill Tutte</p>
-</div>
 
 We coded this with Claude Code, using the
 [King Tutte Datamap Scrolls](https://github.com/Connoiter/king_tutte_datamap_scrolls)
@@ -123,7 +130,9 @@ from them. Claude read the Scrolls and built this repo's pipeline from them:
 - **The small-business part is ours.** Reading review exports, tidying notes
   into OKF, having Claude name the groups, and the plain-language report.
 
-Why "King Tutte"? Bill Tutte was the British-Canadian codebreaker and
+### Why "King Tutte"?
+
+Bill Tutte was the British-Canadian codebreaker and
 mathematician the Tutte Institute is named after. The name is a nod to King
 Tut, who has been immortalized in song, as
 [can be seen on YouTube](https://www.youtube.com/embed/k-fc3UrLRLQ?autoplay=1&mute=1&loop=0).
@@ -163,7 +172,9 @@ Options: `prepare` takes `--text-col`, `--title-col` and `--min-cluster-size`. `
 OKF bundles); with `--link-base` it opens that document's page on a site built from the same
 folder instead, for example a Hugo site of the OKF bundle.
 
-## Credits
+## Hackathon
+
+### Credits
 
 This is a "King Tutte pipeline": the open-source datamapping tools from the
 [Tutte Institute for Mathematics and Computing](https://github.com/TutteInstitute)
@@ -174,25 +185,31 @@ and [Connoiter](https://connoiter.com/blog/).
 
 Built at the Claude for Small Business hackathon, Seattle, October 25, 2026.
 
-## How this meets the judging criteria
+### How this meets the judging criteria
 
 The demo video follows the same five criteria; its script and shot list are in
 [DEMO_VIDEO.md](DEMO_VIDEO.md).
 
-**Does it work.** Yes, end to end. `/datamap` reads a CSV, Excel file or
+#### Does it work
+
+Yes, end to end. `/datamap` reads a CSV, Excel file or
 folder, groups the text, has Claude name the groups, and writes the map and
 report. Both examples in [`examples/`](examples) are real output from it: 260
 café reviews in [`lakeview-cafe`](examples/lakeview-cafe) and 398 real notes in
 [`knowledgeforge`](examples/knowledgeforge). An owner could try it today on
 their own review export.
 
-**Ease of setup for a small business.** No code. Download the ZIP, open the
+#### Ease of setup for a small business
+
+No code. Download the ZIP, open the
 folder in Claude Code, type `/datamap`. Claude asks which file to use and
 installs `uv` if needed. The result is a single `map.html` that opens in any
 browser and can be emailed to staff. Our team set it up cold from this README
 to check that.
 
-**Impact on the business's operations.** Owners collect reviews, surveys and
+#### Impact on the business's operations
+
+Owners collect reviews, surveys and
 support emails but rarely read them all. The report turns them into a short
 "fix these first" list with how many people raised each issue, their average
 rating and a concrete next step, for example: 22 people, 1.9★, "send the ready
@@ -200,7 +217,9 @@ notification at hand-off, not when the ticket prints." It also flags spam and
 double posts so they don't skew the picture. For notes, it shows which areas of
 an owner's know-how could become a paid service, guide or workshop.
 
-**Creativity.** Datamaps are a research tool, built on the Tutte Institute's
+#### Creativity
+
+Datamaps are a research tool, built on the Tutte Institute's
 UMAP, HDBSCAN and DataMapPlot. We packaged them so an owner can use them, and
 paired them with Claude to name the groups and write the actions. The heavy
 work runs locally on a small open-source model, so Claude only reads about 8
@@ -210,14 +229,16 @@ Open Knowledge Format and reports what it fixed (see
 [DATA_CURATION.md](DATA_CURATION.md)), such as three notes whose broken headers
 were silently hiding all their tags.
 
-**Teamwork.** Every member had a distinct role, listed in the table below:
+#### Teamwork
+
+Every member had a distinct role, listed in the table below:
 owner research and pitch, the Claude skill and report, the map and demo video,
 the pipeline, and a cold-start test of the README. Work landed as separate pull
 requests ([#1](https://github.com/Connoiter/claude_for_small_businesses_hackathon/pull/1),
 [#2](https://github.com/Connoiter/claude_for_small_businesses_hackathon/pull/2),
 [#3](https://github.com/Connoiter/claude_for_small_businesses_hackathon/pull/3)).
 
-## Team
+### Team
 
 <!-- TODO(team): replace each role with what you actually did before submitting. -->
 

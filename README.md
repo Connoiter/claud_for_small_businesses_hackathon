@@ -92,6 +92,44 @@ computer, using a small open-source model. To name the groups, Claude reads
 only the briefing file: about 8 typical comments per group plus the 15 most
 unusual ones. Nothing else is uploaded.
 
+## Built on the King Tutte Datamap Scrolls
+
+<div align="center">
+  <a href="https://en.wikipedia.org/wiki/Mask_of_Tutankhamun">
+    <img src="./images/king_tutte_funerary_mask.png" width="60%" alt="Funerary mask of Bill Tutte" />
+  </a>
+  <p>Funerary mask of Bill Tutte</p>
+</div>
+
+We coded this with Claude Code, using the
+[King Tutte Datamap Scrolls](https://github.com/Connoiter/king_tutte_datamap_scrolls)
+as our datamap SDK. The Scrolls are a how-to manual for building
+"King Tutte pipelines": code, docs, papers and recorded talks for the
+open-source datamapping tools from the
+[Tutte Institute for Mathematics and Computing](https://github.com/TutteInstitute),
+gathered in one place so a developer, human or agent, can build datamaps
+from them. Claude read the Scrolls and built this repo's pipeline from them:
+
+- **The pipeline shape.** Embed the text, lay it out with UMAP, group it with
+  HDBSCAN, and draw it with DataMapPlot, as the Scrolls describe.
+- **The `documents` table.** For notes folders, `/datamap` writes the `documents` table
+  (`id`, `text`, `title`, `url`) that the Scrolls specify for Seshette, their
+  generic `/datamap` toolkit, so this repo can switch over to Seshette's
+  scribes when they ship.
+- **The small-business part is ours.** Reading review exports, tidying notes
+  into OKF, having Claude name the groups, and the plain-language report.
+
+Why "King Tutte"? Bill Tutte was the British-Canadian codebreaker and
+mathematician the Tutte Institute is named after. The name is a nod to King
+Tut, who has been immortalized in song, as
+[can be seen on YouTube](https://www.youtube.com/embed/k-fc3UrLRLQ?autoplay=1&mute=1&loop=0).
+
+<div align="center">
+  <a href="https://www.youtube.com/embed/k-fc3UrLRLQ?autoplay=1&mute=1&loop=0">
+    <img src="./images/king_tut_on_snl.jpg" alt="King Tut on SNL, 1978" width="50%" />
+  </a>
+</div>
+
 ## For developers
 
 The skill is [`.claude/skills/datamap/SKILL.md`](.claude/skills/datamap/SKILL.md).
@@ -132,18 +170,64 @@ and [Connoiter](https://connoiter.com/blog/).
 
 Built at the Claude for Small Business hackathon, Seattle, October 25, 2026.
 
+## How this meets the judging criteria
+
+The demo video follows the same five criteria; its script and shot list are in
+[DEMO_VIDEO.md](DEMO_VIDEO.md).
+
+**Does it work.** Yes, end to end. `/datamap` reads a CSV, Excel file or
+folder, groups the text, has Claude name the groups, and writes the map and
+report. Both examples in [`examples/`](examples) are real output from it: 260
+café reviews in [`lakeview-cafe`](examples/lakeview-cafe) and 398 real notes in
+[`knowledgeforge`](examples/knowledgeforge). An owner could try it today on
+their own review export.
+
+**Ease of setup for a small business.** No code. Download the ZIP, open the
+folder in Claude Code, type `/datamap`. Claude asks which file to use and
+installs `uv` if needed. The result is a single `map.html` that opens in any
+browser and can be emailed to staff. Our team set it up cold from this README
+to check that.
+
+**Impact on the business's operations.** Owners collect reviews, surveys and
+support emails but rarely read them all. The report turns them into a short
+"fix these first" list with how many people raised each issue, their average
+rating and a concrete next step, for example: 22 people, 1.9★, "send the ready
+notification at hand-off, not when the ticket prints." It also flags spam and
+double posts so they don't skew the picture. For notes, it shows which areas of
+an owner's know-how could become a paid service, guide or workshop.
+
+**Creativity.** Datamaps are a research tool, built on the Tutte Institute's
+UMAP, HDBSCAN and DataMapPlot. We packaged them so an owner can use them, and
+paired them with Claude to name the groups and write the actions. The heavy
+work runs locally on a small open-source model, so Claude only reads about 8
+examples per group and the customers' text stays on the owner's computer. The
+same pipeline also maps an owner's own notes. First it tidies a copy into
+Open Knowledge Format and reports what it fixed (see
+[DATA_CURATION.md](DATA_CURATION.md)), such as three notes whose broken headers
+were silently hiding all their tags.
+
+**Teamwork.** Every member had a distinct role, listed in the table below:
+owner research and pitch, the Claude skill and report, the map and demo video,
+the pipeline, and a cold-start test of the README. Work landed as separate pull
+requests ([#1](https://github.com/Connoiter/claud_for_small_businesses_hackathon/pull/1),
+[#2](https://github.com/Connoiter/claud_for_small_businesses_hackathon/pull/2),
+[#3](https://github.com/Connoiter/claud_for_small_businesses_hackathon/pull/3)).
+
 ## Team
 
 <!-- TODO(team): replace each role with what you actually did before submitting. -->
 
 | Who | Role |
 |---|---|
-| John Tigue | Lead; King Tutte pipeline; live demo |
+| John Tigue | Lead; King Tutte pipeline; project conceptor; live demo |
 | Cato Lin | `/datamap` skill, ingest, Claude labeling, insights report |
 | Poonam Sharma | Map experience, sample data, demo video |
 | Jolie Martin | Owner research, use case, README, pitch |
-| Brendan MacLean | Mentor; cold-start README test |
 
 ## License
 
 [Apache-2.0](LICENSE)
+
+<div align="center">
+  <img src="./images/tutte_pectoral_scarab_icon.png" width="25%" alt="Tutte pectoral scarab" />
+</div>

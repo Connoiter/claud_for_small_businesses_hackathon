@@ -8,6 +8,10 @@ What it changes, and nothing else:
   * gives files with no front matter a minimal block (type + title)
   * strips front matter from index.md files, as OKF section 8 requires
   * repairs YAML broken by unquoted colons, e.g. `title: Foo: bar`
+  * renames index.md files that are real pages (40+ words of prose, as site
+    generators like Hugo and Next produce) to overview.md, because OKF
+    reserves index.md for directory listings and they would otherwise be
+    skipped; the bundle root index.md is left alone
 The original folder is never modified; the bundle is written to a new folder.
 
 Usage (or `datamap okf`, which also writes the documents table):
@@ -34,12 +38,42 @@ def type_for(meta, rel):
     return TYPE_NAMES.get(domain, domain.replace("-", " ").title() or "Note")
 
 
+def is_content_page(body, min_words=40):
+    """True if body has at least min_words of prose, not just a list of links."""
+    words = 0
+    for line in body.splitlines():
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+        if re.fullmatch(r"[-*+]\s+\[[^\]]*\]\([^)]*\)", line):  # - [text](url)
+            continue
+        line = re.sub(r"!?\[([^\]]*)\]\([^)]*\)", r"\1", line)  # keep link text only
+        words += len(line.split())
+    return words >= min_words
+
+
 def convert(src: Path, dst: Path):
     if dst.exists():
         sys.exit(f"{dst} already exists; pick a new output folder")
     shutil.copytree(src, dst, ignore=shutil.ignore_patterns(".*"))
     stats = {"typed": 0, "already_typed": 0, "tags_listed": 0, "new_front_matter": 0,
-             "index_cleaned": 0, "quoted": 0, "unparseable": []}
+             "index_cleaned": 0, "quoted": 0, "unparseable": [], "index_kept": 0}
+
+    # Index pages with real prose become overview.md so they get typed and mapped.
+    for path in sorted(dst.rglob("index.md")):
+        if path.parent == dst:
+            continue
+        text = path.read_text(encoding="utf-8")
+        m = re.match(r"^---\n(.*?)\n---\n?", text, re.DOTALL)
+        body = text[m.end():] if m else text
+        if not is_content_page(body):
+            continue
+        new = path.with_name("overview.md")
+        if new.exists():
+            new = path.with_name("overview-page.md")
+        path.write_text(body, encoding="utf-8")
+        path.rename(new)
+        stats["index_kept"] += 1
 
     for path in sorted(dst.rglob("*.md")):
         rel = path.relative_to(dst)
@@ -101,6 +135,9 @@ def convert(src: Path, dst: Path):
     print(f"  converted tags to lists in {stats['tags_listed']} files")
     print(f"  added front matter to {stats['new_front_matter']} files")
     print(f"  removed front matter from {stats['index_cleaned']} index.md files")
+    if stats["index_kept"]:
+        print(f"  kept {stats['index_kept']} index.md content pages as overview.md "
+              "(OKF reserves index.md, so they would otherwise be skipped)")
     if stats["quoted"]:
         print(f"  repaired broken YAML by quoting {stats['quoted']} values that contained a colon")
     if stats["unparseable"]:

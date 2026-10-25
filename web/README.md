@@ -1,9 +1,11 @@
 # Demo site
 
-`index.html` introduces the `/datamap` skill. It shows two datamaps made in real `/datamap`
-sessions (`maps/thinkspace.html`: 61 pages of thinkspace.com; `maps/knowledgeforge.html`:
-585 notes from the KnowledgeForge repo), each next to an example conversation built on that
-map. Highlighted regions and searches in the conversation drive the map beside it. To swap in
+`index.html` introduces the `/datamap` skill. It shows three datamaps made in real `/datamap`
+sessions, each next to an example conversation built on that map: `maps/knowledgeforge.html`
+(585 notes from the KnowledgeForge repo), `maps/thinkspace.html` (629 pages of thinkspace.com)
+and `maps/sourcegraph.html` (837 pages of Sourcegraph's public handbook). Highlighted regions
+and searches in the conversation drive the map beside it, and the page links to
+https://connoiter.com/datamap/ for more demos. To swap in
 a new map, replace the file in `maps/` and update the conversation's numbers to match.
 
 Published on GitHub Pages by `.github/workflows/pages.yml`. To preview locally, serve the

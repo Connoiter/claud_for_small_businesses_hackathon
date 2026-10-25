@@ -108,6 +108,8 @@ section > .wrap > h2 { font-size: clamp(1.8rem, 3.4vw, 2.5rem); }
 .install ol { margin: 0; padding-left: 22px; } .install li { margin: 8px 0; }
 .install pre { margin: 0; background: #17231f; color: #e6eeeb; border-radius: 10px; padding: 16px; font-family: var(--font-mono); font-size: 0.85rem; overflow-x: auto; line-height: 1.6; }
 .install pre .c { color: #9aaba4; }
+.more { padding: 36px 0; text-align: center; font-size: 1.15rem; }
+.more a { font-weight: 700; }
 footer { padding: 40px 0 60px; color: var(--muted); font-size: 0.9rem; }
 footer .wrap { display: grid; gap: 8px; }
 
@@ -132,9 +134,11 @@ footer .wrap { display: grid; gap: 8px; }
     <a class="logo" href="#"><b>/</b>datamap</a>
     <nav>
       <a href="#how">How it works</a>
-      <a href="#thinkspace">thinkspace</a>
       <a href="#knowledgeforge">Internexio</a>
+      <a href="#thinkspace">thinkspace</a>
+      <a href="#sourcegraph">Sourcegraph</a>
       <a href="#use">Use it</a>
+      <a href="https://connoiter.com/datamap/">More demos</a>
       <a href="https://github.com/Connoiter/claud_for_small_businesses_hackathon">GitHub</a>
     </nav>
   </header>
@@ -144,7 +148,7 @@ footer .wrap { display: grid; gap: 8px; }
       <h1>See everything your business has written, <em>on one map.</em></h1>
       <p class="lede"><code>/datamap</code> is a Claude skill for small business owners. Point Claude at your reviews, your notes or your website. A few minutes later you have a map you can explore, and a partner to explore it with.</p>
       <div class="cta">
-        <a class="btn primary" href="#thinkspace">See it on thinkspace's website</a>
+        <a class="btn primary" href="#knowledgeforge">See two real maps</a>
         <a class="btn ghost" href="#use">Get the skill</a>
       </div>
       <div class="badges"><span>Runs on your computer</span><span>No code needed</span><span>Built on Tutte Institute maths</span></div>
@@ -153,9 +157,9 @@ footer .wrap { display: grid; gap: 8px; }
       <div class="chat">
         <div class="msg user"><code>/datamap</code> thinkspace.com. What does our website actually say about us?</div>
         <div class="msg claude">
-          <ul class="steps"><li>Read 61 pages from thinkspace.com</li><li>Tidied them into notes</li><li>Mapped them on this computer</li><li>Named the regions</li></ul>
+          <ul class="steps"><li>Read 629 pages from thinkspace.com</li><li>Tidied them into notes</li><li>Mapped them on this computer</li><li>Named 23 regions</li></ul>
         </div>
-        <div class="msg claude"><p>Your site has two regions: <b>coworking and founder tips</b> (52 pages) and <b>Redmond green living</b> (9). Most of it was written in 2009, and nothing since February 2020. <a href="#thinkspace">Open the map ↓</a></p></div>
+        <div class="msg claude"><p>629 pages in 23 regions. 459 of them were written in 2008–2013. Since 2021 there are 16 new pages, and 13 are meeting-room listings. <a href="#thinkspace">Open the map ↓</a></p></div>
       </div>
     </div>
   </div>
@@ -175,60 +179,7 @@ footer .wrap { display: grid; gap: 8px; }
   </div>
 </section>
 
-<!-- Showcase 1: thinkspace -->
-<section class="case" id="thinkspace">
-  <div class="wrap">
-    <div class="case-head">
-      <div>
-        <div class="kicker">Showcase · a website</div>
-        <h2>thinkspace, coworking in Seattle and Redmond</h2>
-        <p class="sub">The owner asks what their own website says. The map answers in one picture, and the conversation turns it into a content plan.</p>
-      </div>
-      <div class="facts"><div><b>61</b>pages read</div><div><b>2</b>regions</div><div><b>2008–2020</b>years covered</div></div>
-    </div>
-    <div class="case-grid">
-      <div>
-        <div class="chat" data-map="ts">
-          <div class="who user reveal">Owner</div>
-          <div class="msg user reveal"><code>/datamap</code> thinkspace.com. What does our website actually say about us?</div>
-          <div class="who reveal">Claude</div>
-          <div class="msg claude reveal"><ul class="steps"><li>Read 61 pages from thinkspace.com</li><li>Saved each page as a note and tidied them</li><li>Mapped them on this computer</li><li>Named 2 regions</li></ul></div>
-          <div class="msg claude reveal">
-            <p>Your site has two regions. <button class="region" data-region="Coworking, startups and founder tips">Coworking, startups and founder tips</button> holds 52 of the 61 pages: founder advice, member spotlights and event recaps.</p>
-            <p><button class="region" data-region="Redmond Earth Day and green living">Redmond Earth Day and green living</button> holds the other 9, and 7 of them are from 2008–2009.</p>
-            <p>The <b>Over time</b> chart in the corner tells the bigger story: 22 pages are from 2009 alone, and the newest post is from February 2020.</p>
-          </div>
-          <div class="who user reveal">Owner</div>
-          <div class="msg user reveal">Our homepage says "Deeply human. AI-native." Does the rest of the site back that up?</div>
-          <div class="who reveal">Claude</div>
-          <div class="msg claude reveal">
-            <p>Not yet. Search the map for <button class="search" data-q="AI">AI</button>: the only page that mentions it is the homepage itself.</p>
-            <p>Your newest stories, like "Bring Your Startup to Seattle" and "How I Work with Davor Bonaci, Kaskada", are from 2019, before the AI-native positioning. A visitor who reads past the homepage meets the thinkspace of five years ago.</p>
-          </div>
-          <div class="who user reveal">Owner</div>
-          <div class="msg user reveal">What should we do about it this month?</div>
-          <div class="who reveal">Claude</div>
-          <div class="msg claude reveal">
-            <p>Three things, in this order:</p>
-            <ol>
-              <li><b>Fill the empty space.</b> Write the posts the map can't find today: how members use AI day to day, a spotlight on an AI startup in the space, and a recap of today's Claude hackathon.</li>
-              <li><b>Bring back member spotlights.</b> <button class="search" data-q="spotlight">Spotlight</button> posts like Lytro (2013) are some of your best pages, and the series stopped.</li>
-              <li><b>Give 2009 a home.</b> Move the <button class="region" data-region="Redmond Earth Day and green living">Redmond green-living</button> posts to an "Our history" page, so new visitors land on today's thinkspace.</li>
-            </ol>
-            <p>Want me to draft the hackathon recap first?</p>
-          </div>
-        </div>
-        <p class="note">Example conversation, built on the real map. Every number above comes from it. Click a highlighted region or search to see it on the map.</p>
-      </div>
-      <div class="mapbox">
-        <iframe id="map-ts" src="maps/thinkspace.html" title="Datamap of thinkspace.com"></iframe>
-        <div class="mapbar"><span>Scroll to zoom · hover a dot to read the page · click it to open</span><span><button type="button" data-reset="ts">Reset view</button> · <a href="maps/thinkspace.html" target="_blank" rel="noopener">Full screen</a></span></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Showcase 2: KnowledgeForge -->
+<!-- Showcase 1: KnowledgeForge -->
 <section class="case" id="knowledgeforge">
   <div class="wrap">
     <div class="case-head">
@@ -278,6 +229,113 @@ footer .wrap { display: grid; gap: 8px; }
   </div>
 </section>
 
+<!-- Showcase 2: thinkspace -->
+<section class="case" id="thinkspace">
+  <div class="wrap">
+    <div class="case-head">
+      <div>
+        <div class="kicker">Showcase · a website</div>
+        <h2>thinkspace, coworking in Seattle and Redmond</h2>
+        <p class="sub">The owner asks what 18 years of their own website say. The map answers in one picture, and the conversation turns it into a content plan.</p>
+      </div>
+      <div class="facts"><div><b>629</b>pages read</div><div><b>23</b>regions</div><div><b>2008–2026</b>years covered</div></div>
+    </div>
+    <div class="case-grid">
+      <div>
+        <div class="chat" data-map="ts">
+          <div class="who user reveal">Owner</div>
+          <div class="msg user reveal"><code>/datamap</code> thinkspace.com. What does our website actually say about us?</div>
+          <div class="who reveal">Claude</div>
+          <div class="msg claude reveal"><ul class="steps"><li>Read 629 pages from thinkspace.com</li><li>Saved each page as a note and tidied them</li><li>Mapped them on this computer</li><li>Named 23 regions</li></ul></div>
+          <div class="msg claude reveal">
+            <p>The biggest regions are <button class="region" data-region="Startup and founder advice">Startup and founder advice</button> <span class="n">60</span>, <button class="region" data-region="Our story, awards and locations">Our story, awards and locations</button> <span class="n">52</span> and <button class="region" data-region="Founder mindset and reflections">Founder mindset and reflections</button> <span class="n">39</span>.</p>
+            <p>The <b>Over time</b> chart in the corner tells the bigger story: 459 pages are from 2008–2013, and 2011 alone has 152. Since 2021 there are 16 new pages, and 13 of them are <button class="region" data-region="Meeting room bookings">meeting-room listings</button>.</p>
+          </div>
+          <div class="who user reveal">Owner</div>
+          <div class="msg user reveal">Our homepage says "Deeply human. AI-native." Does the rest of the site back that up?</div>
+          <div class="who reveal">Claude</div>
+          <div class="msg claude reveal">
+            <p>Barely. Find <button class="search" data-q="AI" data-urls='["https://thinkspace.com/21-questions-to-ask-yourself-before-you-try-and-sell-your-company/", "https://thinkspace.com/52-books-in-a-year-week-6/", "https://thinkspace.com/", "https://thinkspace.com/seattle-event-space/", "https://thinkspace.com/staff-at-thinkspace/", "https://thinkspace.com/virtual-office-ai-native/", "https://thinkspace.com/virtual-office-seattle-wa/", "https://thinkspace.com/virtual-office/"]'>AI</button> on the map: 8 of 629 pages mention it. Six are the homepage and your offer pages (virtual offices, event space, staff). Only two are blog posts: a 2013 book review and "21 Questions to Ask Yourself Before You Try and Sell Your Company" (2026).</p>
+            <p>Green living, meanwhile, fills three whole regions: <button class="region" data-region="Green office and energy savings">Green office and energy savings</button> <span class="n">23</span>, <button class="region" data-region="Redmond Earth Day events">Redmond Earth Day events</button> <span class="n">19</span> and <button class="region" data-region="Recycling and green materials">Recycling and green materials</button> <span class="n">18</span>. 42 of those 60 pages are from 2008. A visitor who reads past the homepage meets the thinkspace of 2008–2013.</p>
+          </div>
+          <div class="who user reveal">Owner</div>
+          <div class="msg user reveal">What should we do about it this month?</div>
+          <div class="who reveal">Claude</div>
+          <div class="msg claude reveal">
+            <p>Three things, in this order:</p>
+            <ol>
+              <li><b>Fill the empty space.</b> Write the posts the map can't find today: how members use AI day to day, a spotlight on an AI startup in the space, and a recap of today's Claude hackathon.</li>
+              <li><b>Bring back member stories.</b> <button class="region" data-region="&quot;How I Work&quot; member stories">"How I Work" member stories</button> <span class="n">17</span> stopped in 2019, and <button class="region" data-region="Press, tours and member spotlights">member spotlights</button> <span class="n">11</span> in 2016. They're the most human part of the site.</li>
+              <li><b>Give 2008 a home.</b> Move the green-living posts to an "Our history" page, so new visitors land on today's thinkspace.</li>
+            </ol>
+            <p>Want me to draft the hackathon recap first?</p>
+          </div>
+        </div>
+        <p class="note">Example conversation, built on the real map. Every number above comes from it. Click a highlighted region or search to see it on the map.</p>
+      </div>
+      <div class="mapbox">
+        <iframe id="map-ts" src="maps/thinkspace.html" title="Datamap of thinkspace.com"></iframe>
+        <div class="mapbar"><span>Scroll to zoom · hover a dot to read the page · click it to open</span><span><button type="button" data-reset="ts">Reset view</button> · <a href="maps/thinkspace.html" target="_blank" rel="noopener">Full screen</a></span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Showcase 3: Sourcegraph handbook -->
+<section class="case" id="sourcegraph">
+  <div class="wrap">
+    <div class="case-head">
+      <div>
+        <div class="kicker">Showcase · a team handbook</div>
+        <h2>Sourcegraph's company handbook</h2>
+        <p class="sub">An operations lead maps 837 handbook pages to fix onboarding. The same works for a ten-person team's SOPs and policies.</p>
+      </div>
+      <div class="facts"><div><b>837</b>pages</div><div><b>21</b>regions</div><div><b>85%</b>in team folders</div></div>
+    </div>
+    <div class="case-grid">
+      <div>
+        <div class="chat" data-map="sg">
+          <div class="who user reveal">Ops lead</div>
+          <div class="msg user reveal"><code>/datamap</code> our handbook. New hires keep saying they can't find anything.</div>
+          <div class="who reveal">Claude</div>
+          <div class="msg claude reveal"><ul class="steps"><li>Read 837 handbook pages</li><li>Tidied them into one OKF bundle</li><li>Mapped them on this computer</li><li>Named 21 regions</li></ul></div>
+          <div class="msg claude reveal">
+            <p>Here's why. 711 of the 837 pages (85%) sit inside team folders: engineering alone has 175, support 121 and security 85. Only 58 pages explain how the company works as a whole.</p>
+            <p>Big regions like <button class="region" data-region="Hiring and recruiting">Hiring and recruiting</button>, <button class="region" data-region="Security policies">Security policies</button> and <button class="region" data-region="Instances and deployments">Instances and deployments</button> are written for the people already doing that work.</p>
+          </div>
+          <div class="who user reveal">Ops lead</div>
+          <div class="msg user reveal">What should a new support engineer read in week one?</div>
+          <div class="who reveal">Claude</div>
+          <div class="msg claude reveal">
+            <p>Search for <button class="search" data-q="onboarding">onboarding</button>: 37 pages mention it, spread across many teams. For support, start in <button class="region" data-region="Team onboarding guides">Team onboarding guides</button>, then <button class="region" data-region="Team support rotations">Team support rotations</button> and <button class="region" data-region="Customer success programs">Customer success programs</button>.</p>
+            <p>I can turn those three regions into one week-one reading list, in order.</p>
+          </div>
+          <div class="who user reveal">Ops lead</div>
+          <div class="msg user reveal">What's cluttering it?</div>
+          <div class="who reveal">Claude</div>
+          <div class="msg claude reveal">
+            <ol>
+              <li><b>Machine-made pages.</b> 47 pages are <button class="search" data-q="Accepted CVEs">Accepted CVEs</button> records from security scans, and 20 are <button class="region" data-region="Generated service runbooks">generated service runbooks</button>. Engineers need them; new hires keep landing on them. Move them out of the main handbook search.</li>
+              <li><b>Orphans.</b> 120 pages fit no region (the grey dots). They're often outdated or misfiled; I can list them for an owner to review.</li>
+            </ol>
+          </div>
+        </div>
+        <p class="note">Example conversation, built on the real map of Sourcegraph's public handbook (<a href="https://github.com/sourcegraph/handbook">GitHub</a>, Apache-2.0). Every number above comes from it.</p>
+      </div>
+      <div class="mapbox">
+        <iframe id="map-sg" src="maps/sourcegraph.html" title="Datamap of the Sourcegraph handbook"></iframe>
+        <div class="mapbar"><span>Scroll to zoom · hover a dot to read the page · click it to open</span><span><button type="button" data-reset="sg">Reset view</button> · <a href="maps/sourcegraph.html" target="_blank" rel="noopener">Full screen</a></span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="more">
+  <div class="wrap">
+    <p>Want to see more? <a href="https://connoiter.com/datamap/">Explore more datamap demos at connoiter.com/datamap →</a></p>
+  </div>
+</section>
+
 <section id="use">
   <div class="wrap">
     <h2>Map your own business</h2>
@@ -312,14 +370,18 @@ What are my customers saying in reviews.csv?</pre>
 <footer>
   <div class="wrap">
     <div>Built at the Claude for Small Business hackathon, Seattle, October 25, 2026, by John Tigue, Cato Lin, Poonam Sharma and Jolie Martin, with mentor Brendan MacLean.</div>
-    <div>Maps made with UMAP, HDBSCAN and DataMapPlot from the Tutte Institute. Notes tidied into Google's Open Knowledge Format. Code on <a href="https://github.com/Connoiter/claud_for_small_businesses_hackathon">GitHub</a> (Apache-2.0). An earlier prototype, <a href="builder.html">the file-upload builder</a>, is still online.</div>
+    <div>Maps made with UMAP, HDBSCAN and DataMapPlot from the Tutte Institute. Notes tidied into Google's Open Knowledge Format. Code on <a href="https://github.com/Connoiter/claud_for_small_businesses_hackathon">GitHub</a> (Apache-2.0). An earlier prototype, <a href="builder.html">the file-upload builder</a>, is still online. More datamap demos at <a href="https://connoiter.com/datamap/">connoiter.com/datamap</a>.</div>
   </div>
 </footer>
 
 <script>
 // Region and search chips in the chats drive the map next to them. The maps are DataMapPlot
 // pages on the same site, so the page can reach their `datamap` object directly.
-const frames = { ts: document.getElementById("map-ts"), kf: document.getElementById("map-kf") };
+const frames = {
+  ts: document.getElementById("map-ts"),
+  kf: document.getElementById("map-kf"),
+  sg: document.getElementById("map-sg"),
+};
 const startView = {};
 
 function mapOf(key) {
@@ -363,13 +425,20 @@ function clearSearch(m) {
   if (input && input.value) { input.value = ""; m.dm.searchText(""); }
 }
 
-function searchMap(key, q) {
+function searchMap(key, q, urls) {
   const m = mapOf(key);
   if (!m) return;
   remember(key, m);
   const input = m.w.document.getElementById("text-search");
   if (input) input.value = q;
-  m.dm.searchText(q);
+  if (urls && m.dm.metaData) {
+    const wanted = new Set(urls);
+    const indices = m.dm.metaData.url.flatMap((u, i) => (wanted.has(u) ? [i] : []));
+    m.dm.dataSelectionManager.addOrUpdateSelectedIndicesOfItem(indices, m.dm.searchItemId);
+    m.dm.highlightPoints(m.dm.searchItemId);
+  } else {
+    m.dm.searchText(q);
+  }
   bringIntoView(m.frame);
   fly(m, key, startView[key]);
 }
@@ -385,7 +454,8 @@ function resetMap(key) {
 document.querySelectorAll(".chat[data-map]").forEach((chat) => {
   const key = chat.dataset.map;
   chat.querySelectorAll(".region").forEach((b) => (b.onclick = () => showRegion(key, b.dataset.region)));
-  chat.querySelectorAll(".search").forEach((b) => (b.onclick = () => searchMap(key, b.dataset.q)));
+  chat.querySelectorAll(".search").forEach((b) => (b.onclick = () =>
+    searchMap(key, b.dataset.q, b.dataset.urls ? JSON.parse(b.dataset.urls) : null)));
 });
 document.querySelectorAll("[data-reset]").forEach((b) => (b.onclick = () => resetMap(b.dataset.reset)));
 

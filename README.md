@@ -1,6 +1,6 @@
 # Datamaps for Small Business
 
-**[See the live demo →](https://connoiter.github.io/claud_for_small_businesses_hackathon/)** Two real datamaps (thinkspace's website and a consultant's 585 notes), each with an example conversation showing how an owner works with the map. No install needed.
+**[See the live demo →](https://connoiter.github.io/claud_for_small_businesses_hackathon/)** Three real datamaps (a consultant's 585 notes, thinkspace's 629-page website and Sourcegraph's handbook), each with an example conversation showing how an owner works with the map. No install needed.
 
 **Hear all your customers at once.** Give Claude your reviews, survey answers or
 customer emails. A few minutes later you get:

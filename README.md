@@ -2,15 +2,19 @@
 
 **[See the live demo →](https://connoiter.github.io/claude_for_small_businesses_hackathon/)** Three real datamaps (a consultant's 585 notes, thinkspace's 629-page website and Sourcegraph's handbook), each with an example conversation showing how an owner works with the map. No install needed.
 
-**Hear all your customers at once.** Give Claude your reviews, survey answers or
-customer emails. A few minutes later you get:
 
-1. **A map of what people are saying.** Similar comments sit together, each
-   group is named in plain words, and you can hover over any dot to read the
-   comment. It's one file you can email to your partner or staff, and it opens
-   in any browser.
-2. **A short report** with what to fix first, what customers love, and the spam
-   or double posts to ignore.
+**Map the oceans of data in your LLM Wiki** Give Claude all your data
+in a private LLM Wiki, formatted in the new standard for second
+brains, Google's Open Knowledge Format (OKF). A few minutes later you
+get:
+
+1. **A visual map of your small business' data that your agent has in
+   its wiki.** Similar comments sit together, each group is named in
+   plain words, and you can hover over any dot to read the
+   comment. It's one file you can email to your partner or staff, and
+   it opens in any browser, even in airplane mode
+
+
 
 You don't need to write any code, and your data stays on your computer.
 Claude only reads a few examples from each group so it can name the groups.

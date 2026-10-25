@@ -591,7 +591,7 @@ $("#retryBtn").onclick = build;
 function showResult(job, smp) {
   state.built = true;
   const name = $("#bizName").value.trim();
-  $("#resultTitle").textContent = (name ? name + "'s" : "Your") + " datamap";
+  $("#resultTitle").textContent = (name ? name + (/s$/i.test(name) ? "'" : "'s") : "Your") + " datamap";
   const note = $("#resultNote"); note.hidden = !smp;
   if (smp) note.textContent = state.sample ? smp.note : `Demo: the pipeline isn't connected yet, so this shows the ${smp.label} map instead of your files.`;
   $("#mapFrame").src = job.map_url; $("#openFull").href = job.map_url;

@@ -240,7 +240,6 @@ requests ([#1](https://github.com/Connoiter/claude_for_small_businesses_hackatho
 
 ### Team
 
-<!-- TODO(team): replace each role with what you actually did before submitting. -->
 
 | Who | Role |
 |---|---|

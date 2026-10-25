@@ -1,0 +1,135 @@
+# Datamaps for Small Business
+
+**Hear all your customers at once.** Give Claude your reviews, survey answers or
+customer emails. A few minutes later you get:
+
+1. **A map of what people are saying.** Similar comments sit together, each
+   group is named in plain words, and you can hover over any dot to read the
+   comment. It's one file you can email to your partner or staff, and it opens
+   in any browser.
+2. **A short report** with what to fix first, what customers love, and the spam
+   or double posts to ignore.
+
+You don't need to write any code, and your data stays on your computer.
+Claude only reads a few examples from each group so it can name the groups.
+
+> **See it first:** download [`examples/lakeview-cafe/map.html`](examples/lakeview-cafe/map.html)
+> and open it in your browser, then read the
+> [report](examples/lakeview-cafe/insights.md). It maps 260 reviews of
+> Lakeview Coffee & Bakery, a made-up Seattle café (the reviews are synthetic).
+
+From the example report:
+
+> **Fix these first**
+> 1. **Mobile orders not ready**: 22 people, average 1.9★. Send the 'ready'
+>    notification when the drink is handed off, not when the ticket prints.
+> 2. **Long weekday morning lines**: 21 people, average 2.4★. Add a third
+>    person on weekdays from 7:30 to 9:30.
+> 3. **Loyalty app losing points**: 15 people, average 2.3★. Restore lost points
+>    for anyone with a screenshot.
+
+**It works on your own notes too.** Point it at a folder of documents, such
+as an Obsidian vault, a "second brain", or an
+[OKF](https://www.gitbook.com/blog/what-is-okf-open-knowledge-format) bundle,
+and it shows what you know and which topics you could sell as a service. See
+[`examples/knowledgeforge`](examples/knowledgeforge): 398 notes from a solo
+consultant's knowledge base, grouped into 16 areas like "Running teams of AI
+agents" and "Google Ads and keyword research".
+
+## What you need
+
+- [Claude Code](https://claude.com/claude-code), with any paid Claude plan.
+- [uv](https://docs.astral.sh/uv/getting-started/installation/), a free
+  one-line install. Claude can install it for you.
+- A CSV or Excel export of your customer text, or a folder of documents
+  (`.md`, `.txt`, `.pdf`). Most review sites, survey tools and help desks
+  have an "Export to CSV" button. For OKF bundles, the reserved `index.md`
+  and `log.md` are skipped.
+
+## Set up (once)
+
+1. Download this project: on GitHub, click **Code → Download ZIP** and unzip it.
+   (Or `git clone` it.)
+2. Open the folder in Claude Code.
+
+## Use it
+
+Type:
+
+```
+/datamap
+```
+
+Claude asks which file or folder to map, runs everything, names the groups,
+and opens the map. You can also just say *"what are my customers saying in
+reviews.csv?"*
+
+The first run downloads a small language model (about 90 MB) and takes a few
+minutes. Later runs take about a minute.
+
+## What you get
+
+Everything is saved in `out/<name>/`:
+
+| File | What it is |
+|---|---|
+| `map.html` | The interactive map. Hover over dots to read comments, search at the top, filter by month at the bottom. |
+| `insights.md` | The report: fix these first, every group with quotes and a suggested action, spam and double posts. |
+| `labels.json` | The group names Claude wrote. Edit any of them and run `datamap render` again. |
+
+## Privacy
+
+Reading your files, building the map and grouping comments all happen on your
+computer, using a small open-source model. To name the groups, Claude reads
+only the briefing file: about 8 typical comments per group plus the 15 most
+unusual ones. Nothing else is uploaded.
+
+## For developers
+
+The skill is [`.claude/skills/datamap/SKILL.md`](.claude/skills/datamap/SKILL.md).
+It drives a two-step command line:
+
+```
+uv run datamap prepare <csv|xlsx|folder> --out out/<name>   # read → embed → lay out → group
+# Claude reads out/<name>/briefing.md and writes out/<name>/labels.json
+uv run datamap render --out out/<name>                      # map.html + insights.md
+```
+
+| Stage | Tool |
+|---|---|
+| Embed | [sentence-transformers](https://www.sbert.net/) `all-MiniLM-L6-v2`, on the CPU |
+| Lay out | [UMAP](https://github.com/lmcinnes/umap) |
+| Group | [fast_hdbscan](https://github.com/TutteInstitute/fast_hdbscan) |
+| Name groups, flag spam | Claude, from `briefing.md` |
+| Render | [DataMapPlot](https://github.com/TutteInstitute/datamapplot), single file |
+
+Options: `prepare` takes `--text-col`, `--title-col` and `--min-cluster-size`. `render` takes
+`--link-base <site URL>`, which makes clicking a dot open that document on a site built
+from the same folder, for example a Hugo site of an OKF bundle.
+
+## Credits
+
+This is a "King Tutte pipeline": the open-source datamapping tools from the
+[Tutte Institute for Mathematics and Computing](https://github.com/TutteInstitute)
+(UMAP, HDBSCAN, DataMapPlot), packaged for small businesses. The pipeline
+design comes from the
+[King Tutte Datamap Scrolls](https://github.com/Connoiter/king_tutte_datamap_scrolls)
+and [Connoiter](https://connoiter.com/blog/).
+
+Built at the Claude for Small Business hackathon, Seattle, October 25, 2026.
+
+## Team
+
+<!-- TODO(team): replace each role with what you actually did before submitting. -->
+
+| Who | Role |
+|---|---|
+| John Tigue | Lead; King Tutte pipeline; live demo |
+| Cato Lin | `/datamap` skill, ingest, Claude labeling, insights report |
+| Poonam Sharma | Map experience, sample data, demo video |
+| Jolie Martin | Owner research, use case, README, pitch |
+| Brendan MacLean | Mentor; cold-start README test |
+
+## License
+
+[Apache-2.0](LICENSE)

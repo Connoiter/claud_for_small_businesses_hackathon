@@ -108,9 +108,19 @@ section > .wrap > h2 { font-size: clamp(1.8rem, 3.4vw, 2.5rem); }
 .install ol { margin: 0; padding-left: 22px; } .install li { margin: 8px 0; }
 .install pre { margin: 0; background: #17231f; color: #e6eeeb; border-radius: 10px; padding: 16px; font-family: var(--font-mono); font-size: 0.85rem; overflow-x: auto; line-height: 1.6; }
 .install pre .c { color: #9aaba4; }
-.more { padding: 44px 0; text-align: center; font-size: 1.15rem; }
-.more p { margin: 0 0 14px; }
-.more .note { margin: 10px 0 0; }
+.gallery { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; margin-top: 28px; }
+.card { display: flex; flex-direction: column; background: var(--panel); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; color: var(--ink); text-decoration: none; transition: transform .2s ease, box-shadow .2s ease; }
+.card:hover, .card:focus-visible { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(23,35,31,0.12); }
+.card img { width: 100%; aspect-ratio: 16 / 8.5; object-fit: cover; object-position: top left; display: block; border-bottom: 1px solid var(--line); background: #fff; }
+.card-body { padding: 16px 20px 20px; }
+.card-meta { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.card .pill { font-family: var(--font-mono); font-size: 0.8rem; color: var(--warn-ink, #7a5310); background: #fbf1dc; border: 1px solid #ecd9ae; border-radius: 99px; padding: 3px 10px; }
+.card .tag { margin-left: auto; font-size: 0.82rem; font-weight: 700; color: var(--muted); }
+.card h3 { font-size: 1.35rem; margin: 12px 0 6px; }
+.card p { margin: 0; color: var(--muted); font-size: 0.97rem; }
+.more-cta { text-align: center; margin-top: 32px; }
+.more-cta .note { margin: 10px 0 0; }
+@media (prefers-reduced-motion: reduce) { .card { transition: none; } .card:hover { transform: none; } }
 footer { padding: 40px 0 60px; color: var(--muted); font-size: 0.9rem; }
 footer .wrap { display: grid; gap: 8px; }
 
@@ -122,6 +132,7 @@ footer .wrap { display: grid; gap: 8px; }
 @media (max-width: 960px) {
   .hero, .case-grid, .install { grid-template-columns: minmax(0, 1fr); }
   .how, .works { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .gallery { grid-template-columns: minmax(0, 1fr); }
   .mapbox { position: static; }
   .top nav { display: none; }
 }
@@ -332,11 +343,32 @@ footer .wrap { display: grid; gap: 8px; }
   </div>
 </section>
 
-<section class="more">
+<section class="more" id="gallery">
   <div class="wrap">
-    <p>Want to see more datamaps?</p>
-    <a class="btn primary" href="https://connoiter.com/datamap/">See more demos →</a>
-    <p class="note">at connoiter.com/datamap</p>
+    <h2>Bigger maps, same pipeline</h2>
+    <p class="sub">The same Tutte Institute tools scale from a few hundred notes to millions of documents. These maps open in your browser; the larger ones take a moment to load.</p>
+    <div class="gallery">
+      <a class="card" href="https://connoiter.com/datamap/55948af4-903c-41cb-997e-a1dfda45eb5f/" target="_blank" rel="noopener" aria-label="Open CORD-19 Research Landscape">
+        <img src="https://connoiter.com/datamap/covers/cord-19.png" alt="Preview of the CORD-19 Research Landscape" loading="lazy">
+        <div class="card-body">
+          <div class="card-meta"><span class="pill">517,229 points</span><span class="pill">39.0 MB</span><span class="tag">CORD-19</span></div>
+          <h3>CORD-19 Research Landscape</h3>
+          <p>An interactive map of COVID-19 research literature, organized into a navigable visual landscape.</p>
+        </div>
+      </a>
+      <a class="card" href="https://connoiter.com/datamap/83e5fa97-9600-4af2-a656-6e128c6e5171/" target="_blank" rel="noopener" aria-label="Open ArXiv Data Map">
+        <img src="https://connoiter.com/datamap/covers/arxiv-data-map.png" alt="Preview of the ArXiv Data Map" loading="lazy">
+        <div class="card-body">
+          <div class="card-meta"><span class="pill">2,477,303 points</span><span class="pill">184.7 MB</span><span class="tag">Full arXiv</span></div>
+          <h3>ArXiv Data Map</h3>
+          <p>A map of papers on arXiv using UMAP and nomic-embed.</p>
+        </div>
+      </a>
+    </div>
+    <div class="more-cta">
+      <a class="btn primary" href="https://connoiter.com/datamap/">See more demos →</a>
+      <p class="note">at connoiter.com/datamap</p>
+    </div>
   </div>
 </section>
 

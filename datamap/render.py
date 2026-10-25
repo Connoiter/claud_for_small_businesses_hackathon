@@ -16,6 +16,12 @@ from .ingest import rating_column
 from .prepare import NOISE, typical_examples
 
 NOISE_LABEL = "Fits no group"
+# DataMapPlot's default scroll zoom (speed 0.01, smoothed) feels sluggish, especially on
+# trackpads. About 2x per mouse-wheel notch, without the lagging animation.
+FASTER_ZOOM_JS = (
+    "datamap.deckgl.setProps({controller: "
+    "{scrollZoom: {speed: 0.03, smooth: false}, doubleClickZoom: true, touchZoom: true}});"
+)
 LOW_RATING = 3.0
 
 
@@ -83,6 +89,9 @@ def write_map(df: pd.DataFrame, labels: dict, path: Path, link_base: str | None 
         hover_text=df["text"].map(lambda t: _shorten(t, 120)).tolist(),
         title=labels.get("title", "Datamap"),
         sub_title=f"{len(df)} documents grouped by meaning. Hover a dot to read it; search above.",
+        title_font_size=26,
+        sub_title_font_size=15,
+        custom_js=FASTER_ZOOM_JS,
         noise_label=NOISE_LABEL,
         extra_point_data=extra,
         hover_text_html_template=template,

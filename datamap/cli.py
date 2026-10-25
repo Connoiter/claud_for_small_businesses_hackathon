@@ -13,8 +13,9 @@ from pathlib import Path
 
 def main(argv: list[str] | None = None) -> None:
     # Windows consoles default to cp1252; the libraries print ✓/✗ and progress bars.
+    # Line buffering keeps progress visible when output goes to a log file (e.g. `serve`).
     for stream in (sys.stdout, sys.stderr):
-        stream.reconfigure(encoding="utf-8", errors="replace")
+        stream.reconfigure(encoding="utf-8", errors="replace", line_buffering=True)
 
     parser = argparse.ArgumentParser(
         prog="datamap", description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
@@ -54,8 +55,19 @@ def main(argv: list[str] | None = None) -> None:
         "bundle); clicking a dot opens <link-base>/<document id>/ instead of the original file.",
     )
 
+    s = sub.add_parser(
+        "serve",
+        help="Run the owner web page (web/) with the pipeline behind its Build button.",
+    )
+    s.add_argument("--port", type=int, default=8000)
+    s.add_argument("--no-open", action="store_true", help="Don't open a browser.")
+
     args = parser.parse_args(argv)
-    if args.command == "okf":
+    if args.command == "serve":
+        from .server import serve
+
+        serve(args.port, open_browser=not args.no_open)
+    elif args.command == "okf":
         from .convert_to_okf import convert
         from .okf_to_documents import write_documents
 

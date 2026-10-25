@@ -301,7 +301,7 @@ a { color: var(--accent); }
     <details class="team">
       <summary>For the team: what this page hands to the pipeline</summary>
       <div class="stack" style="margin-top:12px">
-        <p class="note">When <code>PIPELINE_URL</code> is set at the top of the script, Build sends <code>POST {PIPELINE_URL}/jobs</code> as multipart form data: a <code>manifest</code> field holding this JSON, plus one <code>files</code> part per uploaded file, named <code>{source id}/{path}</code>. The server returns <code>{"job_id"}</code>. The page then polls <code>GET {PIPELINE_URL}/jobs/{job_id}</code>, which returns <code>{"stage": "okf" | "embed" | "cluster" | "name" | "render", "status": "running" | "done" | "failed", "map_url", "regions": [{"name", "count"}]}</code>. With no URL set, the page runs in demo mode.</p>
+        <p class="note">When <code>PIPELINE_URL</code> is set at the top of the script, Build sends <code>POST {PIPELINE_URL}/jobs</code> as multipart form data: a <code>manifest</code> field holding this JSON, plus one <code>files</code> part per uploaded file, named <code>{source id}/{path}</code>. The server returns <code>{"job_id"}</code>. The page then polls <code>GET {PIPELINE_URL}/jobs/{job_id}</code>, which returns <code>{"stage": "okf" | "embed" | "cluster" | "name" | "render", "status": "running" | "done" | "failed", "map_url", "regions": [{"name", "count"}]}</code>. Run <code>uv run datamap serve</code> from the repository root and the page connects to the pipeline on its own; opened any other way, it runs in demo mode.</p>
         <pre id="manifestOut"></pre>
         <div class="row"><button class="btn ghost" type="button" id="copyManifest">Copy manifest</button><span id="copyMsg" class="note" hidden></span></div>
       </div>
@@ -309,11 +309,12 @@ a { color: var(--accent); }
   </main>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
+<script src="vendor/marked.min.js"></script><!-- marked 12.0.2, MIT; kept local so the report renders offline -->
 <script>
-// Set this to the pipeline server to leave demo mode. See "For the team" on the page.
-const PIPELINE_URL = "";
-const DEMO = !PIPELINE_URL;
+// `uv run datamap serve` serves this page and answers GET /jobs; the page then connects to it
+// on its own (see the probe at the bottom). Opened any other way, it runs in demo mode.
+let PIPELINE_URL = "";
+let DEMO = true;
 
 const SAMPLES = {
   cafe: {
@@ -326,6 +327,28 @@ const SAMPLES = {
     map: "../examples/lakeview-cafe/map.html", report: "../examples/lakeview-cafe/insights.md",
     note: "Demo: this map and report were made by the team's /datamap pipeline from 260 made-up reviews. Each dot is one review.",
     regions: [["Staff people love",23],["Mobile orders not ready",22],["Long weekday morning lines",21],["Seasonal drinks, maple latte",20],["Oat milk and vegan options",16],["Loyalty app losing points",15],["Working from laptops",15],["Famous morning buns",14],["Catering and office orders",13],["Croissants, mostly great",12],["Espresso quality",11],["Restroom problems",10],["Dog-friendly patio",9],["Prices going up",7],["Parking and accessibility",6],["$7 lattes and tip screens",5],["Fits no group",41]],
+  },
+  yoga: {
+    label: "Northside Yoga survey (made up)",
+    unit: "conversation", goal: "What members want changed, and what keeps them coming back.",
+    business: { name: "Northside Yoga", description: "A neighbourhood yoga studio with hot, barre and gentle classes. Members buy unlimited plans, 10-class packs or drop in." },
+    sources: [
+      { kind: "file", label: "member_survey.csv", count: 1, bytes: 28372, description: "Our spring and fall member surveys: \"What's one thing we should change?\" One row per answer, with the member's plan, how long they've been a member and a 1 to 5 rating." },
+    ],
+    map: "../examples/northside-yoga/map.html", report: "../examples/northside-yoga/insights.md",
+    note: "Demo: this map and report were made by the team's /datamap pipeline from 238 made-up survey answers. Each dot is one answer.",
+    regions: [["Hot room too hot",20],["More classes with Maya",18],["Happy, nothing to change",16],["Dirty shared mats",15],["Prices too high vs ClassPass",15],["Music too loud",13],["Parking and bike racks",12],["Touched without asking",11],["Barre too hard for beginners",10],["Gentle, senior and family classes",10],["Unfair late cancel fees",9],["Bring back 6am classes",9],["Childcare during classes",8],["Cramped wet locker room",7],["Booking app crashes",7],["More class time options",7],["Prenatal and postnatal classes",6],["More weekend classes",5],["Weekend waitlist frustrations",5],["Fits no group",35]],
+  },
+  paws: {
+    label: "Rainier Paws grooming reviews (made up)",
+    unit: "conversation", goal: "What to fix first, and what people love.",
+    business: { name: "Rainier Paws", description: "A dog grooming salon with doggy daycare and walk-in nail trims." },
+    sources: [
+      { kind: "file", label: "reviews.csv", count: 1, bytes: 36467, description: "A year of reviews from Google, Yelp, Facebook and Nextdoor, plus emails from customers. One row per review, with the star rating and where it came from." },
+    ],
+    map: "../examples/rainier-paws/map.html", report: "../examples/rainier-paws/insights.md",
+    note: "Demo: this map and report were made by the team's /datamap pipeline from 241 made-up reviews. Each dot is one review.",
+    regions: [["Booking app double books",25],["Daycare tires dogs out",23],["Everyone loves Kenji",20],["Pickups run hours late",15],["Surprise fees and price hikes",14],["Daycare webcam keeps breaking",13],["Gentle with nervous dogs",13],["Doodles shaved, not teddy",13],["Kennel cough outbreak",13],["Brooke's cuts hit or miss",12],["People want cat grooming",11],["Cramped shared parking lot",11],["Walk-in nail trims",9],["Clipper burn and nicks",9],["Treats and retail shelf",9],["Photo events and good vibes",5],["Fits no group",26]],
   },
   tea: {
     label: "Fern & Kettle tea shop (made up)",
@@ -526,7 +549,9 @@ async function build() {
   showBuilding(); $("#buildFoot").hidden = true; $("#buildTitle").textContent = "Building your map…";
   let at = 0;
   try {
-    if (DEMO) {
+    // Samples always show their ready-made map; only the owner's own files go to the pipeline.
+    const readyMade = !!state.sample;
+    if (DEMO || readyMade) {
       for (at = 1; at <= STAGES.length; at++) { renderProgress(at); await new Promise((r) => setTimeout(r, at === STAGES.length ? 400 : 700)); }
       const smp = SAMPLES[state.sample || state.base || "cafe"];
       showResult({ map_url: smp.map, regions: smp.regions.map(([name, count]) => ({ name, count })) }, smp);
@@ -559,8 +584,8 @@ function showResult(job, smp) {
   state.built = true;
   const name = $("#bizName").value.trim();
   $("#resultTitle").textContent = (name ? name + "'s" : "Your") + " datamap";
-  const note = $("#resultNote"); note.hidden = !DEMO;
-  if (DEMO) note.textContent = state.sample ? smp.note : `Demo: the pipeline isn't connected yet, so this shows the ${smp.label} map instead of your files.`;
+  const note = $("#resultNote"); note.hidden = !smp;
+  if (smp) note.textContent = state.sample ? smp.note : `Demo: the pipeline isn't connected yet, so this shows the ${smp.label} map instead of your files.`;
   $("#mapFrame").src = job.map_url; $("#openFull").href = job.map_url;
   const reportUrl = job.report_url || (smp && smp.report);
   $("#tabReport").hidden = !reportUrl; $("#resultsReport").innerHTML = ""; showTab("map");
@@ -588,6 +613,9 @@ async function loadReport(url) {
 document.querySelectorAll("[data-go]").forEach((b) => b.onclick = () => go(+b.dataset.go));
 document.querySelectorAll("nav.steps button").forEach((b) => b.onclick = () => go(+b.dataset.step));
 loadSample("cafe"); go(0);
+fetch("/jobs").then((r) => (r.ok ? r.json() : null)).then((j) => {
+  if (j && j.ok) { PIPELINE_URL = location.origin; DEMO = false; updatePill(); }
+}).catch(() => {});
 </script>
 
 </html>

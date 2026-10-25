@@ -33,7 +33,10 @@ def prepare(
     text_col: str | None = None,
     title_col: str | None = None,
     min_cluster_size: int | None = None,
+    on_stage=None,
 ) -> None:
+    """on_stage, if given, is called with "embed" and then "cluster" as work begins."""
+    on_stage = on_stage or (lambda stage: None)
     out.mkdir(parents=True, exist_ok=True)
 
     print(f"Reading {input_path} ...")
@@ -42,10 +45,12 @@ def prepare(
     if len(df) < 10:
         raise SystemExit("A map needs at least 10 documents.")
 
+    on_stage("embed")
     print(f"Embedding on this computer with {EMBEDDER.split('/')[-1]} ...")
     vectors = embed(df)
     np.save(out / "embeddings.npy", vectors)
 
+    on_stage("cluster")
     print("Laying out the map (UMAP) ...")
     df["x"], df["y"] = reduce(vectors).T
 

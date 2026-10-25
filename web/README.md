@@ -11,17 +11,22 @@ No build step, no Hugo.
 
 Samples on the page:
 - **Lakeview Café** (default): 260 made-up reviews, one dot per review. Map and report are the real output of the team's `/datamap` pipeline (github.com/Connoiter/claud_for_small_businesses_hackathon, `examples/lakeview-cafe`).
+- **Northside Yoga**: 238 made-up member survey answers, one dot per answer. Map and report from the team pipeline (`examples/northside-yoga`; data from `demo-data/`).
+- **Rainier Paws**: 241 made-up dog grooming reviews, one dot per review. Map and report from the team pipeline (`examples/rainier-paws`; data from `demo-data/`).
 - **Fern & Kettle**: made-up tea shop one dot per customer, six sources with owner notes. Its map comes from the simpler stand-in pipeline, so it has no report.
 - **KnowledgeForge**: 398 real notes, one dot per note. Map and report from the team pipeline (`examples/knowledgeforge`).
+
+Samples always open their ready-made map, so the demo never waits on the pipeline.
 
 The last step shows the pipeline's `map.html` in a frame, a list of regions, and a **Report** tab that renders `insights.md`.
 
 ## Files
 - `index.html`: the site. The Lakeview and KnowledgeForge samples load `../examples/*/map.html` and `insights.md`, so serve the repository root, not just this folder: `python3 -m http.server` from the root, then open http://localhost:8000/web/.
+- `vendor/marked.min.js`: marked 12.0.2 (MIT), kept local so the Report tab renders without internet.
 - `teashop-datamap.html`: the Fern & Kettle customer map (made with a simpler stand-in pipeline), with its scripts inlined.
 
 ## Handoff contract (draft, for Puna and whoever runs the map step)
-Set `PIPELINE_URL` at the top of the script in `index.html`. Build then sends:
+Run `uv run datamap serve` from the repository root (code in `datamap/server.py`). It serves this page at http://localhost:8000/web/, and the page connects to it on its own. Build then sends the owner's own files (samples stay ready-made):
 - `POST {PIPELINE_URL}/jobs`, multipart: a `manifest` field (JSON below) plus one `files` part per uploaded file, named `{source id}/{path}`. Returns `{"job_id": "..."}`.
 - `GET {PIPELINE_URL}/jobs/{job_id}` returns `{"stage": "okf|embed|cluster|name|render", "status": "running|done|failed", "map_url": "...", "report_url": "...", "regions": [{"name": "...", "count": 0}], "error": "..."}`.
 

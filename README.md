@@ -7,13 +7,6 @@ plain-language report on what to do next.
 
 **[See the live demo →](https://connoiter.github.io/claude_for_small_businesses_hackathon/)** Three real datamaps (a consultant's 585 notes, thinkspace's 629-page website and Sourcegraph's handbook), each with an example conversation showing how an owner works with the map. No install needed.
 
-<div align="center">
-  <a href="https://en.wikipedia.org/wiki/Mask_of_Tutankhamun">
-    <img src="./images/king_tutte_funerary_mask.png" width="100%" alt="Funerary mask of Bill Tutte" />
-  </a>
-  <p>Funerary mask of Bill Tutte</p>
-</div>
-
 ## Introduction
 
 Give Claude all your data in a private LLM Wiki, formatted in the new standard
@@ -111,6 +104,13 @@ only the briefing file: about 8 typical comments per group plus the 15 most
 unusual ones. Nothing else is uploaded.
 
 ## Built on the King Tutte Datamap Scrolls
+
+<div align="center">
+  <a href="https://en.wikipedia.org/wiki/Mask_of_Tutankhamun">
+    <img src="./images/king_tutte_funerary_mask.png" width="100%" alt="Funerary mask of Bill Tutte" />
+  </a>
+  <p>Funerary mask of Bill Tutte</p>
+</div>
 
 We coded this with Claude Code, using the
 [King Tutte Datamap Scrolls](https://github.com/Connoiter/king_tutte_datamap_scrolls)

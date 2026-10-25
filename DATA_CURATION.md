@@ -23,7 +23,7 @@ The broken YAML is the one worth remembering. Titles like `Chrome Extension MV3:
 
 Everything else is left exactly as it was. Every original front matter field is kept, and the markdown body of each file is unchanged. We checked this by comparing files before and after.
 
-Site generators like Hugo and Next use `index.md` as a real page, which OKF would skip, so the converter renames any `index.md` below the root with 40+ words of prose to `overview.md`; on the [Sourcegraph handbook](https://github.com/sourcegraph/handbook) this keeps 141 pages that would otherwise vanish from the map (696 documents become 837).
+Site generators like Hugo and Next use `index.md` as a real page, which OKF would skip, so the converter renames any `index.md` below the root with 40+ words of prose (not counting folder-listing lines like `- [Page](page.md) - summary`) to `overview.md`; on the [Sourcegraph handbook](https://github.com/sourcegraph/handbook) this keeps 139 pages that would otherwise vanish from the map (696 documents become 835).
 
 We left the duplicate in place on purpose. Deleting data is a decision for the bundle's owner, so the tools report it instead.
 

@@ -71,6 +71,8 @@ def write_map(
         urls = [page_url(link_base, i) for i in df["id"]] if link_base else df["url"].fillna("")
         extra["url"] = list(urls)
         kwargs["on_click"] = "if (`{url}`) window.open(`{url}`, '_blank')"
+    if hasattr(look, "marker_sizes"):
+        kwargs["marker_size_array"] = look.marker_sizes(df)
     dates = _dates(df)
     if dates is not None:
         kwargs.update(

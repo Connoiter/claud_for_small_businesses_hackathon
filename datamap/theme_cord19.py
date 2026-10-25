@@ -1,26 +1,30 @@
 """An optional look modelled on DataMapPlot's CORD-19 example map (`render --style cord19`).
 
-Cinzel serif title with a small-caps subtitle, rainbow colours blended by position, thin
-outlines around each group and small dots on white. The default look stays in theme.py.
-Cinzel (SIL OFL 1.1) is embedded by DataMapPlot's offline mode, so the map works offline.
+Cinzel serif title with a small-caps subtitle, Marcellus group names tinted in their group's
+colour, rainbow colours blended by position, lightly shaded group areas with outlines, and
+white-rimmed dots sized by document length. The default look stays in theme.py.
+Cinzel and Marcellus (SIL OFL 1.1) are embedded by DataMapPlot's offline mode.
 """
 
 from __future__ import annotations
 
+import numpy as np
+
 from . import theme
 
-DISPLAY = "Cinzel"
+DISPLAY = "Cinzel"  # title
+LABEL = "Marcellus"  # group names
 STACK = 'Georgia, "Times New Roman", serif'
 INK, MUTED, LINE = "#111111", "#444444", "#e2e2e2"
 
 PLOT_KWARGS = dict(
-    font_family=DISPLAY,
-    font_weight=600,
-    tooltip_font_family=DISPLAY,
+    font_family=LABEL,
+    font_weight=400,
+    tooltip_font_family=DISPLAY,  # DataMapPlot also uses this for the title
     tooltip_font_weight=400,
     background_color="#ffffff",
     noise_color="#bdbdbd",
-    color_label_text=False,
+    color_label_text=True,
     text_outline_width=8,
     text_outline_color="#ffffffdd",
     text_min_pixel_size=14,
@@ -32,9 +36,11 @@ PLOT_KWARGS = dict(
     cluster_boundary_polygons=True,
     color_cluster_boundaries=True,
     cluster_boundary_line_width=2,
+    polygon_alpha=0.6,  # largest gap a group shape bridges, in map units; 0.1 hugs only dense cores
     initial_zoom_fraction=0.9,  # start on the main mass, not far-off outliers
     point_radius_min_pixels=3,
-    point_radius_max_pixels=10,
+    point_radius_max_pixels=12,
+    point_line_width_min_pixels=1,
     tooltip_css=f"""
         font-family: Georgia, "Times New Roman", serif;
         font-size: 13px;
@@ -48,6 +54,12 @@ PLOT_KWARGS = dict(
         max-width: 400px;
     """,
 )
+
+def marker_sizes(df) -> np.ndarray:
+    """Bigger dots for longer documents, as on the CORD-19 map; DataMapPlot rescales to the mean."""
+    words = df["text"].fillna("").str.split().str.len().to_numpy(dtype=float)
+    return np.sqrt(np.clip(words, 20, 2000))
+
 
 HISTOGRAM_SETTINGS = {
     **theme.HISTOGRAM_SETTINGS,
@@ -86,24 +98,42 @@ body {{ background: #ffffff; color: {INK}; }}
 
 
 def custom_js() -> str:
-    """Faster zoom and labels redrawn in Cinzel once the font has loaded (see theme.custom_js)."""
+    """Faster zoom, labels redrawn once the font has loaded (see theme.custom_js), and shaded
+    group areas: DataMapPlot draws outlines only, scaled to map units, so on small maps they
+    come out thinner than a pixel. Swap in a layer with filled areas and 1.5 px outlines."""
     return f"""
 datamap.deckgl.setProps({{controller:
   {{scrollZoom: {{speed: 0.03, smooth: false}}, doubleClickZoom: true, touchZoom: true}}}});
 (function () {{
   const search = document.getElementById("text-search");
   if (search) search.placeholder = "Search the map…";
-  const redrawLabels = () => {{
-    const old = datamap.labelLayer;
-    if (!old) return false;
-    const fresh = old.clone({{fontFamily: "{DISPLAY}", fontWeight: 600,
-      fontSettings: {{sdf: true, buffer: 6, radius: 14, fontSize: 72}}}});
-    datamap.labelLayer = fresh;
+  const swap = (name, props) => {{
+    const old = datamap[name];
+    const fresh = old.clone(props);
+    datamap[name] = fresh;
     datamap.layers = datamap.layers.map((l) => (l === old ? fresh : l));
+  }};
+  const redrawLabels = () => {{
+    if (!datamap.labelLayer) return false;
+    swap("labelLayer", {{fontFamily: "{LABEL}", fontWeight: 400,
+      fontSettings: {{sdf: true, buffer: 6, radius: 14, fontSize: 72}}}});
+    if (datamap.boundaryLayer) swap("boundaryLayer", {{
+      filled: true,
+      getFillColor: (d) => [d.r, d.g, d.b, 38],
+      getLineColor: (d) => [d.r, d.g, d.b, 170],
+      lineWidthUnits: "pixels",
+      getLineWidth: 1.5,
+      lineWidthScale: 1,
+      lineWidthMinPixels: 1,
+      updateTriggers: {{getFillColor: "shade", getLineColor: "shade", getLineWidth: "shade"}},
+    }});
     datamap.deckgl.setProps({{layers: [...datamap.layers]}});
     return true;
   }};
-  document.fonts.load('600 24px "{DISPLAY}"').catch(() => {{}}).then(() => {{
+  Promise.all([
+    document.fonts.load('400 24px "{LABEL}"'),
+    document.fonts.load('400 24px "{DISPLAY}"'),
+  ]).catch(() => {{}}).then(() => {{
     let tries = 0;
     const timer = setInterval(() => {{ if (redrawLabels() || ++tries > 50) clearInterval(timer); }}, 200);
   }});

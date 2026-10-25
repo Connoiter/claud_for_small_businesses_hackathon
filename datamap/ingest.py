@@ -108,8 +108,14 @@ def _load_documents_table(path: Path) -> pd.DataFrame:
         meta = sidecar_df[["id", *keep]].copy()
         if "front_matter" in sidecar_df.columns:
             meta["date"] = [_front_matter_date(s) for s in sidecar_df["front_matter"]]
+            meta["web_url"] = [_front_matter_web_url(s) for s in sidecar_df["front_matter"]]
         meta = meta.replace("", None)
         df = df.merge(meta, on="id", how="left")
+        if "web_url" in df.columns:
+            # Notes made from web pages (datamap crawl) link back to the page, not the file.
+            if "url" in df.columns:
+                df["url"] = df["web_url"].fillna(df["url"])
+            df = df.drop(columns="web_url")
     return df.dropna(axis=1, how="all")
 
 
@@ -120,6 +126,15 @@ def _front_matter_date(raw: str | None) -> str | None:
         return None
     value = fm.get("date") or fm.get("created")
     return str(value) if value else None
+
+
+def _front_matter_web_url(raw: str | None) -> str | None:
+    try:
+        fm = json.loads(raw) if raw else {}
+    except (TypeError, ValueError):
+        return None
+    value = str(fm.get("resource") or "")
+    return value if value.startswith(("http://", "https://")) else None
 
 
 def _guess_text_column(raw: pd.DataFrame) -> str:

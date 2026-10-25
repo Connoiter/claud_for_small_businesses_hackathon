@@ -1,6 +1,6 @@
 ---
 name: datamap
-description: Turn a small business's pile of text into an interactive map of what's in it plus a plain-language report with suggested actions. Works on customer text (reviews, survey answers, support emails, feedback forms) and on notes (an Obsidian vault, a wiki, a "second brain", an OKF knowledge bundle, a folder of documents). Use when the user types /datamap, asks what their customers are saying, wants to make sense of a lot of reviews or feedback, or wants to see what is in their notes or documents.
+description: Turn a small business's pile of text into an interactive map of what's in it plus a plain-language report with suggested actions. Works on customer text (reviews, survey answers, support emails, feedback forms), on notes (an Obsidian vault, a wiki, a "second brain", an OKF knowledge bundle, a folder of documents) and on websites (crawled page by page). Use when the user types /datamap, asks what their customers are saying, wants to make sense of a lot of reviews or feedback, or wants to see what is in their notes or documents.
 ---
 
 # /datamap: see everything in your business's text at once
@@ -16,7 +16,8 @@ All commands run from the repository root: the folder that holds
 ## 1. Find their data
 
 If they didn't say what to map, ask once: "What would you like to map? A CSV or
-Excel export of reviews or survey answers, or a folder of notes or documents?"
+Excel export of reviews or survey answers, a folder of notes or documents, or a
+website?"
 Pick a short run name, e.g. `reviews-oct` or `my-notes`. Then decide the route:
 
 | They have | Route |
@@ -24,6 +25,18 @@ Pick a short run name, e.g. `reviews-oct` or `my-notes`. Then decide the route:
 | CSV or Excel export (reviews, survey, help desk, form answers) | Go to step 3 with the file. |
 | Folder of markdown notes (wiki, Obsidian vault, second brain, OKF bundle) | Step 2 first, then step 3. |
 | Folder of PDFs or `.txt` files | Go to step 3 with the folder. |
+| A website (their own site, help center, blog) | Crawl it (below), then step 2 with the crawled folder, then step 3. |
+
+Website: read it page by page into a folder of notes, one note per page:
+
+```
+uv run datamap crawl "<https://their site/>" --out out/<run-name>/site
+```
+
+It stays on that site (and under the starting path, so start at `/blog/` to map
+only the blog), follows robots.txt, waits between requests, and stops at 150
+pages (`--max-pages` to change). Only crawl a site the owner runs or has
+permission to read. Clicking a dot on the final map opens the live page.
 
 CSV/Excel: the text column is detected automatically (the one with the longest
 entries). If the wrong one gets picked, rerun with `--text-col "<column name>"`.

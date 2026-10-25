@@ -62,7 +62,7 @@ Type:
 
 Claude asks which file or folder to map, runs everything, names the groups,
 and opens the map. You can also just say *"what are my customers saying in
-reviews.csv?"* or *"what's in my notes folder?"*
+reviews.csv?"* or *"what's in my notes folder?"* or *"map my website, https://yourbusiness.com"*
 
 If you give it a folder of notes, Claude first checks and tidies a copy of
 them (your folder is never changed). It tells you what it found, such as
@@ -96,7 +96,9 @@ The skill is [`.claude/skills/datamap/SKILL.md`](.claude/skills/datamap/SKILL.md
 It drives a short command line:
 
 ```
-# Notes folders only: tidy a copy into an OKF bundle, then write Seshette's documents table
+# Websites: read each page into a note. Notes folders (and crawled sites): tidy a copy into
+# an OKF bundle, then write Seshette's documents table
+uv run datamap crawl <https://site/> --out out/<name>/site   # websites only: one note per page
 uv run datamap okf <notes folder> --out out/<name>
 
 uv run datamap prepare <csv|xlsx|folder|documents.parquet> --out out/<name>   # read → embed → lay out → group

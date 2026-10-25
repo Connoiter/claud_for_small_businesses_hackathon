@@ -1,7 +1,8 @@
 """`datamap prepare <input> --out <folder>` then `datamap render --out <folder>`.
 
 For a folder of markdown notes, run `datamap okf <notes> --out <folder>` first and
-prepare `<folder>/documents.parquet`.
+prepare `<folder>/documents.parquet`. For a website, `datamap crawl <url> --out <notes>`
+makes that folder of notes.
 """
 
 from __future__ import annotations
@@ -21,6 +22,15 @@ def main(argv: list[str] | None = None) -> None:
         prog="datamap", description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
     sub = parser.add_subparsers(dest="command", required=True)
+
+    c = sub.add_parser(
+        "crawl",
+        help="Read a website (same site only, robots.txt respected) into a folder of notes "
+        "for `datamap okf`.",
+    )
+    c.add_argument("url", help="Where to start, e.g. https://example.com/")
+    c.add_argument("--out", type=Path, required=True, help="Folder for the page notes.")
+    c.add_argument("--max-pages", type=int, default=150)
 
     o = sub.add_parser(
         "okf",
@@ -63,7 +73,11 @@ def main(argv: list[str] | None = None) -> None:
     s.add_argument("--no-open", action="store_true", help="Don't open a browser.")
 
     args = parser.parse_args(argv)
-    if args.command == "serve":
+    if args.command == "crawl":
+        from .crawl import crawl
+
+        crawl(args.url, args.out, max_pages=args.max_pages)
+    elif args.command == "serve":
         from .server import serve
 
         serve(args.port, open_browser=not args.no_open)

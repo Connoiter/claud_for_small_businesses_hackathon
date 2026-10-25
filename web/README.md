@@ -40,9 +40,12 @@ Run `uv run datamap serve` from the repository root (code in `datamap/server.py`
     {"id": "s1", "kind": "upload", "label": "shopify_orders.csv",
      "description": "My Shopify orders export. Each row is one item in an order; the email is the customer.",
      "files": [{"path": "shopify_orders.csv", "bytes": 137972}]},
-    {"id": "s2", "kind": "github", "label": "github.com/owner/repo", "url": "https://github.com/owner/repo", "subfolder": "wiki", "description": "..."}
+    {"id": "s2", "kind": "github", "label": "github.com/owner/repo", "url": "https://github.com/owner/repo", "subfolder": "wiki", "description": "..."},
+    {"id": "s3", "kind": "website", "label": "yourbusiness.com", "url": "https://yourbusiness.com/", "description": "..."}
   ]
 }
 ```
+
+A `github` source is cloned. A `website` source is read page by page with `datamap crawl` (same site and under the starting path only, robots.txt respected, 150 pages at most; an optional `max_pages` overrides that), and each page becomes a note that links back to the live page.
 
 **How the converter should use it:** `map.unit` decides what gets one OKF note each. Per customer, that means joining rows from every source about the same person (see `customer-datamap/join_to_okf.py`). Per document, it means one note per file. Each source's `description` says how to read that file, for example which column is the customer. `goal` and `business.description` mostly help with naming regions, and may help choose which fields go into each note.

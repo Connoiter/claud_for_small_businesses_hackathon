@@ -245,7 +245,7 @@ a { color: var(--accent); }
     <!-- Step 2 -->
     <section data-panel="1" hidden>
       <h2>Add your files and say what each one is</h2>
-      <p class="lede">Add each export, folder or inbox you want on the map, then write a line about what's in it. That line tells us how to read the file, for example which column is the customer. Nothing is sent anywhere until you press Build.</p>
+      <p class="lede">Add each export, folder, inbox or website you want on the map, then write a line about what's in it. That line tells us how to read the file, for example which column is the customer. Nothing is sent anywhere until you press Build.</p>
       <div class="stack">
         <div class="drop" id="drop">
           <strong>Drop files or folders here</strong>
@@ -254,7 +254,7 @@ a { color: var(--accent); }
             <button class="btn ghost" type="button" id="pickFolder">Choose a folder</button>
           </div>
           <div class="repo">
-            <input type="url" id="repoUrl" placeholder="or paste a GitHub link: https://github.com/owner/repo" aria-label="GitHub link">
+            <input type="url" id="repoUrl" placeholder="or paste a link: your website, or a GitHub repo" aria-label="Website or GitHub link">
             <button class="btn ghost" type="button" id="useRepo">Add</button>
           </div>
           <input type="file" id="folderInput" webkitdirectory multiple>
@@ -387,6 +387,7 @@ const PLACEHOLDERS = {
   json: "For example: Product reviews from Judge.me.",
   folder: "For example: My notes from client meetings, one file per meeting.",
   github: "For example: The docs folder is our help center; ignore the code.",
+  website: "For example: Our website. The service pages and FAQ matter most; the blog less so.",
   any: "What's in this file, and who or what does each row or page describe?",
 };
 
@@ -406,7 +407,7 @@ let nextId = 1;
 
 function esc(s) { return String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
 function fmtBytes(n) { if (n == null) return ""; if (n < 1024) return n + " B"; if (n < 1048576) return Math.round(n / 1024) + " KB"; return (n / 1048576).toFixed(1) + " MB"; }
-function extOf(s) { if (s.kind === "github") return "git"; if (s.kind === "folder") return "dir"; const m = s.label.match(/\.([a-z0-9]+)$/i); return m ? m[1].slice(0, 4) : "file"; }
+function extOf(s) { if (s.kind === "github") return "git"; if (s.kind === "website") return "web"; if (s.kind === "folder") return "dir"; const m = s.label.match(/\.([a-z0-9]+)$/i); return m ? m[1].slice(0, 4) : "file"; }
 
 function loadSample(key) {
   const smp = SAMPLES[key]; state.sample = key; state.base = key; state.built = false;
@@ -437,10 +438,10 @@ function fromFiles(files) {
 
 function renderSources() {
   const list = $("#sourceList");
-  if (!state.sources.length) { list.innerHTML = '<div class="empty">No sources yet. Add a file, a folder or a GitHub link above.</div>'; $("#srcTotals").textContent = ""; return; }
+  if (!state.sources.length) { list.innerHTML = '<div class="empty">No sources yet. Add a file, a folder or a link above.</div>'; $("#srcTotals").textContent = ""; return; }
   list.innerHTML = state.sources.map((s) => {
     const ext = extOf(s); const ph = PLACEHOLDERS[ext] || PLACEHOLDERS[s.kind] || PLACEHOLDERS.any;
-    const meta = [s.kind === "folder" ? `${s.count} files` : null, s.kind === "github" ? (s.count ? `${s.count} files${s.subfolder ? " in " + s.subfolder + "/" : ""}` : "read when you build") : null, fmtBytes(s.bytes), s.skipped ? `${s.skipped} skipped, not text` : null].filter(Boolean).join(" · ");
+    const meta = [s.kind === "folder" ? `${s.count} files` : null, s.kind === "github" ? (s.count ? `${s.count} files${s.subfolder ? " in " + s.subfolder + "/" : ""}` : "read when you build") : null, s.kind === "website" ? "pages on this site are read when you build" : null, fmtBytes(s.bytes), s.skipped ? `${s.skipped} skipped, not text` : null].filter(Boolean).join(" · ");
     return `<div class="source" data-id="${s.id}">
       <span class="ext" aria-hidden="true">${esc(ext)}</span>
       <span><span class="name">${esc(s.label)}</span><br><span class="meta">${esc(meta)}</span></span>
@@ -464,9 +465,14 @@ $("#folderInput").onchange = (e) => { e.target.files.length && fromFiles([...e.t
 $("#filesInput").onchange = (e) => { e.target.files.length && fromFiles([...e.target.files]); e.target.value = ""; };
 $("#useRepo").onclick = () => {
   const inp = $("#repoUrl"), v = inp.value.trim();
-  if (!/^https:\/\/github\.com\/[\w.-]+\/[\w.-]+/.test(v)) { inp.setCustomValidity("Paste a link that starts with https://github.com/owner/repo"); inp.reportValidity(); return; }
+  let url;
+  try { url = new URL(/^https?:\/\//i.test(v) ? v : "https://" + v); } catch { url = null; }
+  if (!url || !url.hostname.includes(".")) { inp.setCustomValidity("Paste a web address, like https://yourbusiness.com or https://github.com/owner/repo"); inp.reportValidity(); return; }
   inp.setCustomValidity(""); inp.value = "";
-  addSources([{ kind: "github", label: v.replace(/^https:\/\//, ""), url: v, count: null, bytes: null }]);
+  const href = url.href, label = href.replace(/^https?:\/\//, "").replace(/\/$/, "");
+  // GitHub repos are cloned; any other site is read page by page (same site only).
+  const kind = /^(www\.)?github\.com$/i.test(url.hostname) && /^\/[\w.-]+\/[\w.-]+/.test(url.pathname) ? "github" : "website";
+  addSources([{ kind, label, url: href, count: null, bytes: null }]);
 };
 const drop = $("#drop");
 ["dragenter", "dragover"].forEach((t) => drop.addEventListener(t, (e) => { e.preventDefault(); drop.classList.add("over"); }));
@@ -498,8 +504,9 @@ function manifest() {
     map: { unit: getUnit(), unit_label: getUnit() === "other" ? ($("#unitOther").value.trim() || null) : null, goal: $("#goal").value.trim() || null },
     business: { name: $("#bizName").value.trim() || null, description: $("#bizDesc").value.trim() || null },
     sources: state.sources.map((s) => {
-      const o = { id: s.id, kind: s.kind === "github" ? "github" : "upload", label: s.label, description: s.description.trim() || null };
-      if (s.kind === "github") { o.url = s.url; if (s.subfolder) o.subfolder = s.subfolder; }
+      const linked = s.kind === "github" || s.kind === "website";
+      const o = { id: s.id, kind: linked ? s.kind : "upload", label: s.label, description: s.description.trim() || null };
+      if (linked) { o.url = s.url; if (s.subfolder) o.subfolder = s.subfolder; }
       else o.files = s.files ? s.files.slice(0, 20).map((f) => ({ path: f.webkitRelativePath || f._path || f.name, bytes: f.size })) : [{ path: s.label, bytes: s.bytes }];
       if (s.files && s.files.length > 20) o.files_total = s.files.length;
       return o;

@@ -10,8 +10,8 @@ What it changes, and nothing else:
   * repairs YAML broken by unquoted colons, e.g. `title: Foo: bar`
 The original folder is never modified; the bundle is written to a new folder.
 
-Usage:
-    python convert_to_okf.py ../knowledgeforge/wiki kf_bundle
+Usage (or `datamap okf`, which also writes the documents table):
+    python -m datamap.convert_to_okf ../knowledgeforge/wiki kf_bundle
 """
 import re
 import shutil

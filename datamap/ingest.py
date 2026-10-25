@@ -32,7 +32,7 @@ def load(path: Path, text_col: str | None = None, title_col: str | None = None) 
     else:
         raise SystemExit(
             f"Don't know how to read {path}. Give a CSV, an Excel file, a folder, "
-            "or a documents.parquet from okf_to_documents.py."
+            "or the documents.parquet written by `datamap okf`."
         )
 
     df["text"] = df["text"].fillna("").astype(str).map(_clean)

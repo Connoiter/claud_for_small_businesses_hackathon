@@ -10,8 +10,8 @@ OKF-only fields (type, description, tags) go to a separate sidecar file,
 okf_metadata.parquet, because Seshette's schema is fixed and has no column
 for them.
 
-Usage:
-    python okf_to_documents.py path/to/bundle --out-dir out/
+Usage (or `datamap okf`, which runs convert_to_okf.py first):
+    python -m datamap.okf_to_documents path/to/bundle --out-dir out/
 """
 import argparse
 import json
@@ -58,12 +58,9 @@ def title_for(meta, body, path):
     return m.group(1).strip() if m else path.stem.replace("-", " ").replace("_", " ")
 
 
-def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument("bundle", type=Path)
-    ap.add_argument("--out-dir", type=Path, default=Path("."))
-    args = ap.parse_args()
-    root = args.bundle.resolve()
+def write_documents(bundle: Path, out_dir: Path):
+    """Write documents.parquet and okf_metadata.parquet for one OKF bundle."""
+    root = bundle.resolve()
 
     docs, extras, skipped, no_type = [], [], [], []
     for path in sorted(root.rglob("*.md")):
@@ -102,9 +99,9 @@ def main():
         raise SystemExit(f"No usable OKF documents in {root}")
 
     df = pd.DataFrame(docs)
-    args.out_dir.mkdir(parents=True, exist_ok=True)
-    df.to_parquet(args.out_dir / "documents.parquet", index=False)
-    pd.DataFrame(extras).to_parquet(args.out_dir / "okf_metadata.parquet", index=False)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    df.to_parquet(out_dir / "documents.parquet", index=False)
+    pd.DataFrame(extras).to_parquet(out_dir / "okf_metadata.parquet", index=False)
 
     # Seshette asks callers to warn about short docs and exact duplicates.
     short = df[df["text"].str.split().str.len() < SHORT_WORDS]
@@ -113,7 +110,7 @@ def main():
         dupes[text].append(_id)
     dupes = [ids for ids in dupes.values() if len(ids) > 1]
 
-    print(f"Wrote {len(df)} documents to {args.out_dir/'documents.parquet'}")
+    print(f"Wrote {len(df)} documents to {out_dir/'documents.parquet'}")
     for rel, why in skipped:
         print(f"  skipped {rel}: {why}")
     if no_type:
@@ -124,6 +121,14 @@ def main():
               f"(may form junk clusters): {', '.join(short['id'][:5])}")
     for ids in dupes:
         print(f"  warning: identical text in {', '.join(ids)}")
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("bundle", type=Path)
+    ap.add_argument("--out-dir", type=Path, default=Path("."))
+    args = ap.parse_args()
+    write_documents(args.bundle, args.out_dir)
 
 
 if __name__ == "__main__":

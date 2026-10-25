@@ -41,8 +41,7 @@ can't see. The owner's folder is never changed; the tidied copy goes into
 `out/<run-name>/okf_bundle`.
 
 ```
-uv run python convert_to_okf.py "<notes folder>" out/<run-name>/okf_bundle
-uv run python okf_to_documents.py out/<run-name>/okf_bundle --out-dir out/<run-name>
+uv run datamap okf "<notes folder>" --out out/<run-name>
 ```
 
 If the first command says the bundle folder already exists, it's from an

@@ -97,8 +97,7 @@ It drives a short command line:
 
 ```
 # Notes folders only: tidy a copy into an OKF bundle, then write Seshette's documents table
-uv run python convert_to_okf.py <notes folder> out/<name>/okf_bundle
-uv run python okf_to_documents.py out/<name>/okf_bundle --out-dir out/<name>
+uv run datamap okf <notes folder> --out out/<name>
 
 uv run datamap prepare <csv|xlsx|folder|documents.parquet> --out out/<name>   # read → embed → lay out → group
 # Claude reads out/<name>/briefing.md and writes out/<name>/labels.json
@@ -107,7 +106,7 @@ uv run datamap render --out out/<name>                                        # 
 
 | Stage | Tool |
 |---|---|
-| Tidy notes into OKF | [`convert_to_okf.py`](convert_to_okf.py), [`okf_to_documents.py`](okf_to_documents.py) |
+| Tidy notes into OKF | [`datamap/convert_to_okf.py`](datamap/convert_to_okf.py), [`datamap/okf_to_documents.py`](datamap/okf_to_documents.py) |
 | Embed | [sentence-transformers](https://www.sbert.net/) `all-MiniLM-L6-v2`, on the CPU |
 | Lay out | [UMAP](https://github.com/lmcinnes/umap) |
 | Group | [fast_hdbscan](https://github.com/TutteInstitute/fast_hdbscan) |

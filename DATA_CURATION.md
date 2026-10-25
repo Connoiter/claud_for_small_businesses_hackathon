@@ -19,7 +19,7 @@ The broken YAML is the one worth remembering. Titles like `Chrome Extension MV3:
 
 ## What the converter changes
 
-`convert_to_okf.py` copies the wiki to a new folder and never touches the original. It makes only the changes OKF needs. It adds `type` based on each file's `domain` (diagnostics becomes `Diagnostic`, patterns becomes `Pattern`, and so on). It rewrites tags into list form while keeping the same tags. It quotes values that contain a colon so the YAML parses. It removes front matter from `index.md` (keeping `okf_version: "0.2"` at the bundle root) and gives the one bare file a minimal header.
+[`datamap/convert_to_okf.py`](datamap/convert_to_okf.py) copies the wiki to a new folder and never touches the original. It makes only the changes OKF needs. It adds `type` based on each file's `domain` (diagnostics becomes `Diagnostic`, patterns becomes `Pattern`, and so on). It rewrites tags into list form while keeping the same tags. It quotes values that contain a colon so the YAML parses. It removes front matter from `index.md` (keeping `okf_version: "0.2"` at the bundle root) and gives the one bare file a minimal header.
 
 Everything else is left exactly as it was. Every original front matter field is kept, and the markdown body of each file is unchanged. We checked this by comparing files before and after.
 
@@ -27,7 +27,7 @@ We left the duplicate in place on purpose. Deleting data is a decision for the b
 
 ## What the mapper produces
 
-`okf_to_documents.py` reads any OKF bundle and writes two files.
+[`datamap/okf_to_documents.py`](datamap/okf_to_documents.py) reads any OKF bundle and writes two files.
 
 `documents.parquet` follows Seshette's `documents` table: `id` (the OKF concept ID, meaning the path without `.md`), `text` (the body), `title` (from front matter, then the first heading, then the filename) and `url` (a `file://` link, so clicking a point on the map opens the file).
 
@@ -37,19 +37,23 @@ The mapper skips reserved files (`index.md`, `log.md`) and hidden folders, check
 
 ## Running it
 
-The `/datamap` skill runs these two steps for you whenever you give it a folder
-of notes. To run them by hand, from this repo with KnowledgeForge cloned next to
-it (`uv` installs the dependencies from `pyproject.toml` on first run):
+The `/datamap` skill runs both steps for you whenever you give it a folder of
+notes. To run them by hand, from this repo with KnowledgeForge cloned next to it
+(`uv` installs the dependencies from `pyproject.toml` on first run):
 
 ```
-uv run python convert_to_okf.py ../knowledgeforge/wiki kf_bundle
-uv run python okf_to_documents.py kf_bundle --out-dir out
+uv run datamap okf ../knowledgeforge/wiki --out out
 ```
+
+This writes the bundle to `out/okf_bundle` and the documents table to
+`out/documents.parquet`. Each step also runs on its own:
+`uv run python -m datamap.convert_to_okf <wiki> <bundle>` and
+`uv run python -m datamap.okf_to_documents <bundle> --out-dir <folder>`.
 
 Expected output:
 
 ```
-OKF bundle written to kf_bundle
+OKF bundle written to out/okf_bundle
   added type to 392 files (5 already had one)
   converted tags to lists in 299 files
   added front matter to 1 files
@@ -73,9 +77,9 @@ In the event's own survey of small business owners, unreliable or inaccurate AI 
 domain, topic, trust tier and dates from `okf_metadata.parquet` next to it:
 
 ```
-uv run datamap prepare out/documents.parquet --out out/kf
-# Claude names the groups in out/kf/labels.json (the skill does this)
-uv run datamap render --out out/kf
+uv run datamap prepare out/documents.parquet --out out
+# Claude names the groups in out/labels.json (the skill does this)
+uv run datamap render --out out
 ```
 
 Clicking a dot on the map opens that note's file. Still to do: color points by

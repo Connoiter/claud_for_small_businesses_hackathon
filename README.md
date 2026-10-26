@@ -254,15 +254,19 @@ https://github.com/Connoiter/claude_for_small_businesses_hackathon
 
 #### Creativity
 
-Datamaps are a research tool, built on the Tutte Institute's
-UMAP, HDBSCAN and DataMapPlot. We packaged them so an owner can use them, and
-paired them with Claude to name the groups and write the actions. The heavy
-work runs locally on a small open-source model, so Claude only reads about 8
-examples per group and the customers' text stays on the owner's computer. The
-same pipeline also maps an owner's own notes. First it tidies a copy into
-Open Knowledge Format and reports what it fixed (see
-[DATA_CURATION.md](DATA_CURATION.md)), such as three notes whose broken headers
-were silently hiding all their tags.
+Unless you are deep into cutting edge Topological Data Analysis, you
+may well have never seen a datamap map before.
+
+Datamaps are a next level play wherein modern transformer based and
+neural embeddings are married with traditional unsupervised machine
+learning techniques.
+
+Datamaps are a base visualizaton of large collections of embeeding
+vectors that are exploding in numbers. Think mobile phone generating
+a need for Flickr to process and visualize large colletions of images.
+In this case, the embedding vectors are the exploding new datatype
+and like Flickr datamaps allow us to handle large collections of 
+embedding vectors.
 
 #### Teamwork
 

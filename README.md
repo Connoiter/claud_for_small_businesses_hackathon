@@ -154,6 +154,12 @@ Tut, who has been immortalized in song, as
 
 ## For developers
 
+<div align="center">
+  <a href="https://connoiter.com/blog/data_map_pipeline/">
+    <img src="./images/data_map_pipeline.jpeg" width="80%" alt="King Tutte datamap pipeline" />
+  </a>
+</div>
+
 The skill is [`.claude/skills/datamap/SKILL.md`](.claude/skills/datamap/SKILL.md).
 It drives a short command line:
 
